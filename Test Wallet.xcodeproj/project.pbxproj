@@ -14,6 +14,12 @@
 		30B11ACD29C9AE4700A6BBF8 /* Test_WalletTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B11ACC29C9AE4700A6BBF8 /* Test_WalletTests.swift */; };
 		30B11AD729C9AE4700A6BBF8 /* Test_WalletUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B11AD629C9AE4700A6BBF8 /* Test_WalletUITests.swift */; };
 		30B11AD929C9AE4700A6BBF8 /* Test_WalletUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B11AD829C9AE4700A6BBF8 /* Test_WalletUITestsLaunchTests.swift */; };
+		30B11AE729C9B14400A6BBF8 /* Web3 in Frameworks */ = {isa = PBXBuildFile; productRef = 30B11AE629C9B14400A6BBF8 /* Web3 */; };
+		30B11AE929C9B14400A6BBF8 /* Web3ContractABI in Frameworks */ = {isa = PBXBuildFile; productRef = 30B11AE829C9B14400A6BBF8 /* Web3ContractABI */; };
+		30B11AEB29C9B14400A6BBF8 /* Web3PromiseKit in Frameworks */ = {isa = PBXBuildFile; productRef = 30B11AEA29C9B14400A6BBF8 /* Web3PromiseKit */; };
+		30B11AED29C9B1C500A6BBF8 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B11AEC29C9B1C500A6BBF8 /* ViewModel.swift */; };
+		30B11AF129C9BB0600A6BBF8 /* PomoNetwork.json in Resources */ = {isa = PBXBuildFile; fileRef = 30B11AF029C9BB0600A6BBF8 /* PomoNetwork.json */; };
+		30B11AF329C9BB9600A6BBF8 /* abi.json in Resources */ = {isa = PBXBuildFile; fileRef = 30B11AF229C9BB9600A6BBF8 /* abi.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +51,9 @@
 		30B11AD229C9AE4700A6BBF8 /* Test WalletUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Test WalletUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		30B11AD629C9AE4700A6BBF8 /* Test_WalletUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test_WalletUITests.swift; sourceTree = "<group>"; };
 		30B11AD829C9AE4700A6BBF8 /* Test_WalletUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test_WalletUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		30B11AEC29C9B1C500A6BBF8 /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
+		30B11AF029C9BB0600A6BBF8 /* PomoNetwork.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = PomoNetwork.json; sourceTree = "<group>"; };
+		30B11AF229C9BB9600A6BBF8 /* abi.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = abi.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +61,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				30B11AE929C9B14400A6BBF8 /* Web3ContractABI in Frameworks */,
+				30B11AEB29C9B14400A6BBF8 /* Web3PromiseKit in Frameworks */,
+				30B11AE729C9B14400A6BBF8 /* Web3 in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,6 +87,8 @@
 		30B11AAE29C9AE4600A6BBF8 = {
 			isa = PBXGroup;
 			children = (
+				30B11AF229C9BB9600A6BBF8 /* abi.json */,
+				30B11AF029C9BB0600A6BBF8 /* PomoNetwork.json */,
 				30B11AB929C9AE4600A6BBF8 /* Test Wallet */,
 				30B11ACB29C9AE4700A6BBF8 /* Test WalletTests */,
 				30B11AD529C9AE4700A6BBF8 /* Test WalletUITests */,
@@ -100,6 +114,7 @@
 				30B11ABE29C9AE4700A6BBF8 /* Assets.xcassets */,
 				30B11AC029C9AE4700A6BBF8 /* Test_Wallet.entitlements */,
 				30B11AC129C9AE4700A6BBF8 /* Preview Content */,
+				30B11AEC29C9B1C500A6BBF8 /* ViewModel.swift */,
 			);
 			path = "Test Wallet";
 			sourceTree = "<group>";
@@ -145,6 +160,11 @@
 			dependencies = (
 			);
 			name = "Test Wallet";
+			packageProductDependencies = (
+				30B11AE629C9B14400A6BBF8 /* Web3 */,
+				30B11AE829C9B14400A6BBF8 /* Web3ContractABI */,
+				30B11AEA29C9B14400A6BBF8 /* Web3PromiseKit */,
+			);
 			productName = "Test Wallet";
 			productReference = 30B11AB729C9AE4600A6BBF8 /* Test Wallet.app */;
 			productType = "com.apple.product-type.application";
@@ -217,6 +237,9 @@
 				Base,
 			);
 			mainGroup = 30B11AAE29C9AE4600A6BBF8;
+			packageReferences = (
+				30B11AE529C9B14400A6BBF8 /* XCRemoteSwiftPackageReference "Web3.swift" */,
+			);
 			productRefGroup = 30B11AB829C9AE4600A6BBF8 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -233,6 +256,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				30B11AF329C9BB9600A6BBF8 /* abi.json in Resources */,
+				30B11AF129C9BB0600A6BBF8 /* PomoNetwork.json in Resources */,
 				30B11AC329C9AE4700A6BBF8 /* Preview Assets.xcassets in Resources */,
 				30B11ABF29C9AE4700A6BBF8 /* Assets.xcassets in Resources */,
 			);
@@ -260,6 +285,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				30B11ABD29C9AE4600A6BBF8 /* ContentView.swift in Sources */,
+				30B11AED29C9B1C500A6BBF8 /* ViewModel.swift in Sources */,
 				30B11ABB29C9AE4600A6BBF8 /* Test_WalletApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -612,6 +638,35 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		30B11AE529C9B14400A6BBF8 /* XCRemoteSwiftPackageReference "Web3.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Boilertalk/Web3.swift.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		30B11AE629C9B14400A6BBF8 /* Web3 */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30B11AE529C9B14400A6BBF8 /* XCRemoteSwiftPackageReference "Web3.swift" */;
+			productName = Web3;
+		};
+		30B11AE829C9B14400A6BBF8 /* Web3ContractABI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30B11AE529C9B14400A6BBF8 /* XCRemoteSwiftPackageReference "Web3.swift" */;
+			productName = Web3ContractABI;
+		};
+		30B11AEA29C9B14400A6BBF8 /* Web3PromiseKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30B11AE529C9B14400A6BBF8 /* XCRemoteSwiftPackageReference "Web3.swift" */;
+			productName = Web3PromiseKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 30B11AAF29C9AE4600A6BBF8 /* Project object */;
 }
