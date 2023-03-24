@@ -12,7 +12,8 @@ import Web3ContractABI
 
 struct ContentView: View {
     
-    @State var rpcUrl = "http://127.0.0.1:8545/"
+    @State var rpcUrl = "http://shanelicrblabsio.local"
+    @State var rpcPort = "8545"
     
     @State var web3: Web3?
     @State var web3state = "Blockchain connected yet."
@@ -31,7 +32,8 @@ struct ContentView: View {
     @State var sendResponse = ""
     
     func reset() {
-        rpcUrl = "http://127.0.0.1:8545/"
+        rpcUrl = "http://shanelicrblabsio.local"
+        rpcPort = "8545"
         
         web3 = nil
         web3state = "Blockchain connected yet."
@@ -51,10 +53,10 @@ struct ContentView: View {
     }
     
     func connect2web3() {
-        web3 = Web3(rpcURL: rpcUrl)
-        web3?.eth.accounts()
-            .done { accounts in
-                web3state = "Blockchain connected!\nThe main account address is \(accounts.first?.hex(eip55: true) ?? "N/A")"
+        web3 = Web3(rpcURL: "\(rpcUrl):\(rpcPort)")
+        web3?.clientVersion()
+            .done { result in
+                web3state = "Blockchain connected!\nThe client version is \(result)"
             }
             .catch { error in
                 web3state = error.localizedDescription
