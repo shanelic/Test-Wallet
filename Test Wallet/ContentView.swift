@@ -23,13 +23,16 @@ struct ContentView: View {
     @State var contract: DynamicContract?
     @State var contractMessage = ""
     
-    @State var methodName = "getMyAddress"
+    @State var methodName = "mint"
     
     @State var canCall = false
     
     @State var callResponse = ""
     @State var estimateResponse = ""
     @State var sendResponse = ""
+    
+    @State var method: SolidityFunction?
+    @State var inputs: [(String, String)] = []
     
     func reset() {
         rpcUrl = "http://shanelicrblabsio.local"
@@ -97,9 +100,6 @@ struct ContentView: View {
         }
         do {
             contract = try web3.eth.Contract(json: abi_data, abiKey: nil, address: address)
-            contract?.methods.forEach { (key, value) in
-                print("::: ", key, value)
-            }
             methodNameOnChange(newValue: methodName)
         } catch {
             contractMessage = error.localizedDescription
@@ -108,11 +108,22 @@ struct ContentView: View {
     }
     
     func methodNameOnChange(newValue: String) {
-        if contract?[newValue] != nil {
-            canCall = true
-        } else {
+        guard let contract = contract, contract[newValue] != nil else {
             canCall = false
+            method = nil
+            return
         }
+        canCall = true
+        method = contract.methods.first(where: { $0.value.name == newValue })?.value
+        guard let method = method else {
+            method = nil
+            return
+        }
+        inputs = []
+        method.inputs.forEach { param in
+            inputs.append((param.name, ""))
+        }
+        print(inputs)
     }
     
     func callMethod() {
@@ -127,11 +138,9 @@ struct ContentView: View {
             method(accounts.first!).call()
         }
         .done { outputs in
-            print(outputs)
             callResponse = outputs.description
         }
         .catch { error in
-            print(error)
             callResponse = error.localizedDescription
         }
     }
@@ -141,12 +150,8 @@ struct ContentView: View {
             estimateResponse = ""
             return
         }
-        firstly {
-            web3.eth.accounts()
-        }
-        .then { accounts in
-            method(accounts.first!).estimateGas()
-        }
+        firstly(execute: web3.eth.accounts)
+            .then { method(makeParams()).estimateGas(from: $0.first!) }
         .done { gas in
             estimateResponse = "\nThe estimate gas price is \(gas.quantity)"
         }
@@ -157,22 +162,25 @@ struct ContentView: View {
     
     func sendMethod() {
         guard let contract = contract, let method = contract[methodName], let web3 = web3 else {
-            callResponse = ""
+            sendResponse = ""
             return
         }
-        firstly {
-            web3.eth.accounts()
-        }
-        .then { accounts in
-            method(accounts.first!).send(from: accounts.first!)
-        }
-        .done { data in
-            print(data)
-            sendResponse = data.hex()
-        }
-        .catch { error in
-            sendResponse = error.localizedDescription
-        }
+        firstly(execute: web3.eth.accounts)
+            .then { method(makeParams()).send(gasLimit: EthereumQuantity(quantity: 21.gwei), from: $0.first!) }
+            .done { sendResponse = $0.hex() }
+            .catch { sendResponse = $0.localizedDescription }
+    }
+    
+    private func binding(for index: Int) -> Binding<String> {
+        return Binding(get: {
+            return inputs[index].1
+        }, set: {
+            inputs[index].1 = $0
+        })
+    }
+    
+    private func makeParams() -> [String] {
+        return inputs.map { $0.1 }
     }
     
     var body: some View {
@@ -224,15 +232,23 @@ struct ContentView: View {
                 }
                 // Method
                 VStack(alignment: .leading) {
-                    Text("Call Method")
+                    Text("Method")
                         .font(.headline)
                     TextField("Method Name", text: $methodName)
                         .lineLimit(1)
                         .onChange(of: methodName, perform: methodNameOnChange(newValue:))
                 }
+                VStack {
+                    ForEach(0 ..< inputs.count, id: \.self) { index in
+                        Text(inputs[index].0)
+                            .font(.headline)
+                        TextField(inputs[index].0, text: binding(for: index))
+                            .lineLimit(2)
+                    }
+                }
                 // Call
                 VStack(spacing: 8) {
-                    Button("Call " + methodName, action: callMethod)
+                    Button("Call", action: callMethod)
                         .disabled(!canCall)
                         .frame(maxWidth: .infinity)
                     Text(callResponse)
@@ -240,10 +256,7 @@ struct ContentView: View {
                         .frame(maxWidth: .infinity)
                         .font(.footnote)
                         .foregroundColor(.gray)
-                }
-                // Estimate
-                VStack(spacing: 8) {
-                    Button("Estimate " + methodName, action: methodEstimated)
+                    Button("Estimate", action: methodEstimated)
                         .disabled(!canCall)
                         .frame(maxWidth: .infinity)
                     Text(estimateResponse)
@@ -251,10 +264,7 @@ struct ContentView: View {
                         .frame(maxWidth: .infinity)
                         .font(.footnote)
                         .foregroundColor(.gray)
-                }
-                // Send
-                VStack(spacing: 8) {
-                    Button("Send " + methodName, action: sendMethod)
+                    Button("Send", action: sendMethod)
                         .disabled(!canCall)
                         .frame(maxWidth: .infinity)
                     Text(sendResponse)
