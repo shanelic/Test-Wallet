@@ -23,8 +23,12 @@ struct ContentView: View {
     @State var contractMessage = ""
     
     @State var methodName = "getMyAddress"
+    
     @State var canCall = false
+    
     @State var callResponse = ""
+    @State var estimateResponse = ""
+    @State var sendResponse = ""
     
     func reset() {
         rpcUrl = "http://127.0.0.1:8545/"
@@ -36,6 +40,14 @@ struct ContentView: View {
         
         contract = nil
         contractMessage = ""
+        
+        methodName = "getMyBalance"
+        
+        canCall = false
+        
+        callResponse = ""
+        estimateResponse = ""
+        sendResponse = ""
     }
     
     func connect2web3() {
@@ -46,7 +58,6 @@ struct ContentView: View {
             }
             .catch { error in
                 web3state = error.localizedDescription
-                web3 = nil
             }
             .finally {
                 methodNameOnChange(newValue: methodName)
@@ -56,26 +67,40 @@ struct ContentView: View {
     func addContract() {
         contractMessage = ""
         guard let address = EthereumAddress(hexString: contractAddress) else {
-            contractMessage += "\nContract address initializing failed."
+            contractMessage = "Contract address initializing failed."
             methodNameOnChange(newValue: methodName)
             return
         }
+        guard let web3 = web3 else {
+            return
+        }
+        web3.eth.getCode(address: address, block: .latest)
+            .done { code in
+                if code.hex() == "0x" {
+                    contractMessage = "The Address provided is not a contract."
+                    contract = nil
+                    return
+                } else {
+                    contractMessage = "The contract address is loaded."
+                }
+            }
+            .catch { error in
+                contractMessage = error.localizedDescription
+            }
         guard let abi_url = Bundle.main.url(forResource: "abi", withExtension: "json"),
             let abi_data = try? Data(contentsOf: abi_url) else {
-            contractMessage += "\nABI json file loading failed."
+            contractMessage = "ABI json file loading failed."
             methodNameOnChange(newValue: methodName)
             return
         }
         do {
-            contract = try web3?.eth.Contract(json: abi_data, abiKey: nil, address: address)
-            guard web3 != nil, contract != nil else {
-                methodNameOnChange(newValue: methodName)
-                return
+            contract = try web3.eth.Contract(json: abi_data, abiKey: nil, address: address)
+            contract?.methods.forEach { (key, value) in
+                print("::: ", key, value)
             }
-            contractMessage = "Contract Added!\nThere are \(contract?.methods.count ?? -1) methods in the contract"
             methodNameOnChange(newValue: methodName)
         } catch {
-            contractMessage += "\n\(error.localizedDescription)"
+            contractMessage = error.localizedDescription
             methodNameOnChange(newValue: methodName)
         }
     }
@@ -89,16 +114,15 @@ struct ContentView: View {
     }
     
     func callMethod() {
-        guard let contract = contract else {
-            callResponse = ""
-            return
-        }
-        guard let method = contract[methodName] else {
+        guard let contract = contract, let method = contract[methodName], let web3 = web3 else {
             callResponse = ""
             return
         }
         firstly {
-            method().call()
+            web3.eth.accounts()
+        }
+        .then { accounts in
+            method(accounts.first!).call()
         }
         .done { outputs in
             print(outputs)
@@ -110,16 +134,62 @@ struct ContentView: View {
         }
     }
     
+    func methodEstimated() {
+        guard let contract = contract, let method = contract[methodName], let web3 = web3 else {
+            estimateResponse = ""
+            return
+        }
+        firstly {
+            web3.eth.accounts()
+        }
+        .then { accounts in
+            method(accounts.first!).estimateGas()
+        }
+        .done { gas in
+            estimateResponse = "\nThe estimate gas price is \(gas.quantity)"
+        }
+        .catch { error in
+            estimateResponse = error.localizedDescription
+        }
+    }
+    
+    func sendMethod() {
+        guard let contract = contract, let method = contract[methodName], let web3 = web3 else {
+            callResponse = ""
+            return
+        }
+        firstly {
+            web3.eth.accounts()
+        }
+        .then { accounts in
+            method(accounts.first!).send(from: accounts.first!)
+        }
+        .done { data in
+            print(data)
+            sendResponse = data.hex()
+        }
+        .catch { error in
+            sendResponse = error.localizedDescription
+        }
+    }
+    
     var body: some View {
         VStack(spacing: 20) {
             Text("Hello, Wallet!")
                 .font(.title)
             VStack(spacing: 20) {
-                // RPC
+                // RPC URL
                 VStack(alignment: .leading) {
                     Text("RPC Url")
                         .font(.headline)
                     TextField("RPC Url", text: $rpcUrl)
+                        .keyboardType(.URL)
+                }
+                // RPC PORT
+                VStack(alignment: .leading) {
+                    Text("RPC Port")
+                        .font(.headline)
+                    TextField("RPC Port", text: $rpcPort)
                 }
                 // Wallet
                 VStack(spacing: 8) {
@@ -152,7 +222,7 @@ struct ContentView: View {
                 }
                 // Method
                 VStack(alignment: .leading) {
-                    Text("Method")
+                    Text("Call Method")
                         .font(.headline)
                     TextField("Method Name", text: $methodName)
                         .lineLimit(1)
@@ -164,6 +234,28 @@ struct ContentView: View {
                         .disabled(!canCall)
                         .frame(maxWidth: .infinity)
                     Text(callResponse)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity)
+                        .font(.footnote)
+                        .foregroundColor(.gray)
+                }
+                // Estimate
+                VStack(spacing: 8) {
+                    Button("Estimate " + methodName, action: methodEstimated)
+                        .disabled(!canCall)
+                        .frame(maxWidth: .infinity)
+                    Text(estimateResponse)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity)
+                        .font(.footnote)
+                        .foregroundColor(.gray)
+                }
+                // Send
+                VStack(spacing: 8) {
+                    Button("Send " + methodName, action: sendMethod)
+                        .disabled(!canCall)
+                        .frame(maxWidth: .infinity)
+                    Text(sendResponse)
                         .multilineTextAlignment(.center)
                         .frame(maxWidth: .infinity)
                         .font(.footnote)
