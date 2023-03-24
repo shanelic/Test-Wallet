@@ -20,6 +20,17 @@
 		30B11AED29C9B1C500A6BBF8 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B11AEC29C9B1C500A6BBF8 /* ViewModel.swift */; };
 		30B11AF129C9BB0600A6BBF8 /* PomoNetwork.json in Resources */ = {isa = PBXBuildFile; fileRef = 30B11AF029C9BB0600A6BBF8 /* PomoNetwork.json */; };
 		30B11AF329C9BB9600A6BBF8 /* abi.json in Resources */ = {isa = PBXBuildFile; fileRef = 30B11AF229C9BB9600A6BBF8 /* abi.json */; };
+		30B11AF629CC5C4600A6BBF8 /* WalletConnect in Frameworks */ = {isa = PBXBuildFile; productRef = 30B11AF529CC5C4600A6BBF8 /* WalletConnect */; };
+		30B11AF829CC5C4600A6BBF8 /* WalletConnectAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 30B11AF729CC5C4600A6BBF8 /* WalletConnectAuth */; };
+		30B11AFA29CC5C4600A6BBF8 /* WalletConnectChat in Frameworks */ = {isa = PBXBuildFile; productRef = 30B11AF929CC5C4600A6BBF8 /* WalletConnectChat */; };
+		30B11AFC29CC5C4600A6BBF8 /* WalletConnectEcho in Frameworks */ = {isa = PBXBuildFile; productRef = 30B11AFB29CC5C4600A6BBF8 /* WalletConnectEcho */; };
+		30B11AFE29CC5C4600A6BBF8 /* WalletConnectNetworking in Frameworks */ = {isa = PBXBuildFile; productRef = 30B11AFD29CC5C4600A6BBF8 /* WalletConnectNetworking */; };
+		30B11B0029CC5C4600A6BBF8 /* WalletConnectPairing in Frameworks */ = {isa = PBXBuildFile; productRef = 30B11AFF29CC5C4600A6BBF8 /* WalletConnectPairing */; };
+		30B11B0229CC5C4600A6BBF8 /* WalletConnectPush in Frameworks */ = {isa = PBXBuildFile; productRef = 30B11B0129CC5C4600A6BBF8 /* WalletConnectPush */; };
+		30B11B0429CC5C4600A6BBF8 /* WalletConnectRouter in Frameworks */ = {isa = PBXBuildFile; productRef = 30B11B0329CC5C4600A6BBF8 /* WalletConnectRouter */; };
+		30B11B0629CC5C4600A6BBF8 /* WalletConnectVerify in Frameworks */ = {isa = PBXBuildFile; productRef = 30B11B0529CC5C4600A6BBF8 /* WalletConnectVerify */; };
+		30B11B0829CC5C4600A6BBF8 /* Web3Inbox in Frameworks */ = {isa = PBXBuildFile; productRef = 30B11B0729CC5C4600A6BBF8 /* Web3Inbox */; };
+		30B11B0A29CC5C4600A6BBF8 /* Web3Wallet in Frameworks */ = {isa = PBXBuildFile; productRef = 30B11B0929CC5C4600A6BBF8 /* Web3Wallet */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +65,7 @@
 		30B11AEC29C9B1C500A6BBF8 /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		30B11AF029C9BB0600A6BBF8 /* PomoNetwork.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = PomoNetwork.json; sourceTree = "<group>"; };
 		30B11AF229C9BB9600A6BBF8 /* abi.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = abi.json; sourceTree = "<group>"; };
+		30B11B0B29CD480300A6BBF8 /* Test-Wallet-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Test-Wallet-Info.plist"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,8 +73,19 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				30B11B0829CC5C4600A6BBF8 /* Web3Inbox in Frameworks */,
+				30B11AF629CC5C4600A6BBF8 /* WalletConnect in Frameworks */,
 				30B11AE929C9B14400A6BBF8 /* Web3ContractABI in Frameworks */,
+				30B11B0429CC5C4600A6BBF8 /* WalletConnectRouter in Frameworks */,
+				30B11B0629CC5C4600A6BBF8 /* WalletConnectVerify in Frameworks */,
+				30B11B0229CC5C4600A6BBF8 /* WalletConnectPush in Frameworks */,
+				30B11AFE29CC5C4600A6BBF8 /* WalletConnectNetworking in Frameworks */,
+				30B11AFA29CC5C4600A6BBF8 /* WalletConnectChat in Frameworks */,
+				30B11B0029CC5C4600A6BBF8 /* WalletConnectPairing in Frameworks */,
 				30B11AEB29C9B14400A6BBF8 /* Web3PromiseKit in Frameworks */,
+				30B11AF829CC5C4600A6BBF8 /* WalletConnectAuth in Frameworks */,
+				30B11AFC29CC5C4600A6BBF8 /* WalletConnectEcho in Frameworks */,
+				30B11B0A29CC5C4600A6BBF8 /* Web3Wallet in Frameworks */,
 				30B11AE729C9B14400A6BBF8 /* Web3 in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -109,6 +132,7 @@
 		30B11AB929C9AE4600A6BBF8 /* Test Wallet */ = {
 			isa = PBXGroup;
 			children = (
+				30B11B0B29CD480300A6BBF8 /* Test-Wallet-Info.plist */,
 				30B11ABA29C9AE4600A6BBF8 /* Test_WalletApp.swift */,
 				30B11ABC29C9AE4600A6BBF8 /* ContentView.swift */,
 				30B11ABE29C9AE4700A6BBF8 /* Assets.xcassets */,
@@ -164,6 +188,17 @@
 				30B11AE629C9B14400A6BBF8 /* Web3 */,
 				30B11AE829C9B14400A6BBF8 /* Web3ContractABI */,
 				30B11AEA29C9B14400A6BBF8 /* Web3PromiseKit */,
+				30B11AF529CC5C4600A6BBF8 /* WalletConnect */,
+				30B11AF729CC5C4600A6BBF8 /* WalletConnectAuth */,
+				30B11AF929CC5C4600A6BBF8 /* WalletConnectChat */,
+				30B11AFB29CC5C4600A6BBF8 /* WalletConnectEcho */,
+				30B11AFD29CC5C4600A6BBF8 /* WalletConnectNetworking */,
+				30B11AFF29CC5C4600A6BBF8 /* WalletConnectPairing */,
+				30B11B0129CC5C4600A6BBF8 /* WalletConnectPush */,
+				30B11B0329CC5C4600A6BBF8 /* WalletConnectRouter */,
+				30B11B0529CC5C4600A6BBF8 /* WalletConnectVerify */,
+				30B11B0729CC5C4600A6BBF8 /* Web3Inbox */,
+				30B11B0929CC5C4600A6BBF8 /* Web3Wallet */,
 			);
 			productName = "Test Wallet";
 			productReference = 30B11AB729C9AE4600A6BBF8 /* Test Wallet.app */;
@@ -239,6 +274,7 @@
 			mainGroup = 30B11AAE29C9AE4600A6BBF8;
 			packageReferences = (
 				30B11AE529C9B14400A6BBF8 /* XCRemoteSwiftPackageReference "Web3.swift" */,
+				30B11AF429CC5C4600A6BBF8 /* XCRemoteSwiftPackageReference "WalletConnectSwiftV2" */,
 			);
 			productRefGroup = 30B11AB829C9AE4600A6BBF8 /* Products */;
 			projectDirPath = "";
@@ -441,10 +477,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Test Wallet/Preview Content\"";
-				DEVELOPMENT_TEAM = RRJJL9M4MV;
+				DEVELOPMENT_TEAM = 4C6PALJQLW;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Test-Wallet-Info.plist";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -460,7 +497,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.1;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "iresh.studio.test-wallet";
+				PRODUCT_BUNDLE_IDENTIFIER = "pomo.network.test-wallet";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -481,10 +518,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Test Wallet/Preview Content\"";
-				DEVELOPMENT_TEAM = RRJJL9M4MV;
+				DEVELOPMENT_TEAM = 4C6PALJQLW;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Test-Wallet-Info.plist";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -500,7 +538,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.1;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "iresh.studio.test-wallet";
+				PRODUCT_BUNDLE_IDENTIFIER = "pomo.network.test-wallet";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -652,6 +690,14 @@
 				kind = branch;
 			};
 		};
+		30B11AF429CC5C4600A6BBF8 /* XCRemoteSwiftPackageReference "WalletConnectSwiftV2" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/WalletConnect/WalletConnectSwiftV2";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -669,6 +715,61 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 30B11AE529C9B14400A6BBF8 /* XCRemoteSwiftPackageReference "Web3.swift" */;
 			productName = Web3PromiseKit;
+		};
+		30B11AF529CC5C4600A6BBF8 /* WalletConnect */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30B11AF429CC5C4600A6BBF8 /* XCRemoteSwiftPackageReference "WalletConnectSwiftV2" */;
+			productName = WalletConnect;
+		};
+		30B11AF729CC5C4600A6BBF8 /* WalletConnectAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30B11AF429CC5C4600A6BBF8 /* XCRemoteSwiftPackageReference "WalletConnectSwiftV2" */;
+			productName = WalletConnectAuth;
+		};
+		30B11AF929CC5C4600A6BBF8 /* WalletConnectChat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30B11AF429CC5C4600A6BBF8 /* XCRemoteSwiftPackageReference "WalletConnectSwiftV2" */;
+			productName = WalletConnectChat;
+		};
+		30B11AFB29CC5C4600A6BBF8 /* WalletConnectEcho */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30B11AF429CC5C4600A6BBF8 /* XCRemoteSwiftPackageReference "WalletConnectSwiftV2" */;
+			productName = WalletConnectEcho;
+		};
+		30B11AFD29CC5C4600A6BBF8 /* WalletConnectNetworking */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30B11AF429CC5C4600A6BBF8 /* XCRemoteSwiftPackageReference "WalletConnectSwiftV2" */;
+			productName = WalletConnectNetworking;
+		};
+		30B11AFF29CC5C4600A6BBF8 /* WalletConnectPairing */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30B11AF429CC5C4600A6BBF8 /* XCRemoteSwiftPackageReference "WalletConnectSwiftV2" */;
+			productName = WalletConnectPairing;
+		};
+		30B11B0129CC5C4600A6BBF8 /* WalletConnectPush */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30B11AF429CC5C4600A6BBF8 /* XCRemoteSwiftPackageReference "WalletConnectSwiftV2" */;
+			productName = WalletConnectPush;
+		};
+		30B11B0329CC5C4600A6BBF8 /* WalletConnectRouter */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30B11AF429CC5C4600A6BBF8 /* XCRemoteSwiftPackageReference "WalletConnectSwiftV2" */;
+			productName = WalletConnectRouter;
+		};
+		30B11B0529CC5C4600A6BBF8 /* WalletConnectVerify */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30B11AF429CC5C4600A6BBF8 /* XCRemoteSwiftPackageReference "WalletConnectSwiftV2" */;
+			productName = WalletConnectVerify;
+		};
+		30B11B0729CC5C4600A6BBF8 /* Web3Inbox */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30B11AF429CC5C4600A6BBF8 /* XCRemoteSwiftPackageReference "WalletConnectSwiftV2" */;
+			productName = Web3Inbox;
+		};
+		30B11B0929CC5C4600A6BBF8 /* Web3Wallet */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30B11AF429CC5C4600A6BBF8 /* XCRemoteSwiftPackageReference "WalletConnectSwiftV2" */;
+			productName = Web3Wallet;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
