@@ -10,177 +10,138 @@ import Web3
 import Web3PromiseKit
 import Web3ContractABI
 
+/*
+ 
+ Account #0: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 (10000 ETH)
+ Private Key: 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+ 
+ Account #1: 0x70997970C51812dc3A010C7d01b50e0d17dc79C8 (10000 ETH)
+ Private Key: 0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d
+ 
+ */
+
+enum TestWalletError: Error {
+    case general(_ reason: String)
+}
+
 struct ContentView: View {
     
-    @State var rpcUrl = "http://shanelicrblabsio.local"
-    @State var rpcPort = "8545"
+    @State var rpcUrl = "http://10.14.67.4"
+    @State var rpcPort = "7000"
     
     @State var web3: Web3?
-    @State var web3state = "Blockchain connected yet."
+    @State var contractAddress = "0xa4c02eC587071d37eEbb345332942E99E0499eD4"
+    @State var erc721Contract: GenericERC721Contract?
+    @State var dynamicContract: DynamicContract?
     
-    @State var contractAddress = "0x5fbdb2315678afecb367f032d93f642f64180aa3"
-    
-    @State var contract: DynamicContract?
     @State var contractMessage = ""
     
-    @State var methodName = "mint"
+    @State var methodResponse = ""
     
-    @State var canCall = false
+    @State var myPrivateKey = "0x7742f00f27407887563707673c4c0afaab1c87fbe6cabf5547aeb58fe2260cdd"
+    @State var otherPrivateKey = "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"
     
-    @State var callResponse = ""
-    @State var estimateResponse = ""
-    @State var sendResponse = ""
-    
-    @State var method: SolidityFunction?
-    @State var inputs: [(String, String)] = []
+    func myPrint(_ items: Any...) {
+        print(":::", items)
+    }
     
     func reset() {
-        rpcUrl = "http://shanelicrblabsio.local"
-        rpcPort = "8545"
+        rpcUrl = "http://10.14.67.4"
+        rpcPort = "7000"
         
         web3 = nil
-        web3state = "Blockchain connected yet."
         
-        contractAddress = "0x5fbdb2315678afecb367f032d93f642f64180aa3"
+        contractAddress = "0xa4c02eC587071d37eEbb345332942E99E0499eD4"
         
-        contract = nil
+        dynamicContract = nil
         contractMessage = ""
-        
-        methodName = "getMyBalance"
-        
-        canCall = false
-        
-        callResponse = ""
-        estimateResponse = ""
-        sendResponse = ""
     }
     
     func connect2web3() {
-        web3 = Web3(rpcURL: "\(rpcUrl):\(rpcPort)")
-        web3?.clientVersion()
-            .done { result in
-                web3state = "Blockchain connected!\nThe client version is \(result)"
-            }
-            .catch { error in
-                web3state = error.localizedDescription
-            }
-            .finally {
-                methodNameOnChange(newValue: methodName)
-            }
-    }
-    
-    func addContract() {
         contractMessage = ""
-        guard let address = EthereumAddress(hexString: contractAddress) else {
-            contractMessage = "Contract address initializing failed."
-            methodNameOnChange(newValue: methodName)
-            return
-        }
+        dynamicContract = nil
+        web3 = Web3(rpcURL: "\(rpcUrl):\(rpcPort)")
         guard let web3 = web3 else {
+            contractMessage = "web3 network not connected."
             return
         }
-        web3.eth.getCode(address: address, block: .latest)
+        web3.clientVersion()
+            .then { version in
+                contractMessage = "The client version is \(version)"
+                guard let address = EthereumAddress(hexString: contractAddress) else {
+                    throw TestWalletError.general("contract address is invalid.")
+                }
+                return web3.eth.getCode(address: address, block: .latest)
+            }
             .done { code in
                 if code.hex() == "0x" {
-                    contractMessage = "The Address provided is not a contract."
-                    contract = nil
-                    return
+                    throw TestWalletError.general("The Address provided is not a contract.")
                 } else {
-                    contractMessage = "The contract address is loaded."
+                    guard let abi_url = Bundle.main.url(forResource: "abi", withExtension: "json"),
+                        let abi_data = try? Data(contentsOf: abi_url) else {
+                        throw TestWalletError.general("ABI json file loading failed.")
+                    }
+                    guard let address = EthereumAddress(hexString: contractAddress) else {
+                        throw TestWalletError.general("contract address is invalid.")
+                    }
+                    dynamicContract = try web3.eth.Contract(json: abi_data, abiKey: nil, address: address)
+                    erc721Contract = web3.eth.Contract(type: GenericERC721Contract.self, address: address)
                 }
             }
             .catch { error in
-                contractMessage = error.localizedDescription
+                contractMessage = errorHandler(error)
             }
-        guard let abi_url = Bundle.main.url(forResource: "abi", withExtension: "json"),
-            let abi_data = try? Data(contentsOf: abi_url) else {
-            contractMessage = "ABI json file loading failed."
-            methodNameOnChange(newValue: methodName)
-            return
-        }
-        do {
-            contract = try web3.eth.Contract(json: abi_data, abiKey: nil, address: address)
-            methodNameOnChange(newValue: methodName)
-        } catch {
-            contractMessage = error.localizedDescription
-            methodNameOnChange(newValue: methodName)
-        }
     }
     
-    func methodNameOnChange(newValue: String) {
-        guard let contract = contract, contract[newValue] != nil else {
-            canCall = false
-            method = nil
+    func getEthBalance() {
+        guard
+            let web3 = web3,
+            let myPrivateKey = try? EthereumPrivateKey(hexPrivateKey: myPrivateKey)
+        else {
+            methodResponse = "Initializing failed."
             return
         }
-        canCall = true
-        method = contract.methods.first(where: { $0.value.name == newValue })?.value
-        guard let method = method else {
-            method = nil
+        web3.eth.getBalance(address: myPrivateKey.address, block: .latest)
+            .done { balance in
+                methodResponse = "\(balance.quantity)"
+            }
+            .catch { error in
+                methodResponse = errorHandler(error)
+            }
+    }
+    
+    func getNftBalance() {
+        guard
+            let erc721Contract = erc721Contract,
+            let myPrivateKey = try? EthereumPrivateKey(hexPrivateKey: myPrivateKey)
+        else {
+            methodResponse = "Initializing failed."
             return
         }
-        inputs = []
-        method.inputs.forEach { param in
-            inputs.append((param.name, ""))
-        }
-        print(inputs)
+        erc721Contract
+            .balanceOf(address: myPrivateKey.address)
+            .call()
+            .done { balance in
+                methodResponse = "\(balance["_balance"] ?? "N/A")"
+            }
+            .catch { error in
+                methodResponse = errorHandler(error)
+            }
     }
     
-    func callMethod() {
-        guard let contract = contract, let method = contract[methodName], let web3 = web3 else {
-            callResponse = ""
-            return
+    private func errorHandler(_ error: Error) -> String {
+        myPrint(error)
+        if case .general(let reason) = error as? TestWalletError {
+            return reason
+        } else if let error = error as? RPCResponse<EthereumQuantity>.Error {
+            return error.message
+        } else if let error = error as? RPCResponse<EthereumData>.Error {
+            return error.message
+        } else if case .invalidInvocation = error as? InvocationError {
+            return (error as! InvocationError).localizedDescription
+        } else {
+            return error.localizedDescription
         }
-        firstly {
-            web3.eth.accounts()
-        }
-        .then { accounts in
-            method(accounts.first!).call()
-        }
-        .done { outputs in
-            callResponse = outputs.description
-        }
-        .catch { error in
-            callResponse = error.localizedDescription
-        }
-    }
-    
-    func methodEstimated() {
-        guard let contract = contract, let method = contract[methodName], let web3 = web3 else {
-            estimateResponse = ""
-            return
-        }
-        firstly(execute: web3.eth.accounts)
-            .then { method(makeParams()).estimateGas(from: $0.first!) }
-        .done { gas in
-            estimateResponse = "\nThe estimate gas price is \(gas.quantity)"
-        }
-        .catch { error in
-            estimateResponse = error.localizedDescription
-        }
-    }
-    
-    func sendMethod() {
-        guard let contract = contract, let method = contract[methodName], let web3 = web3 else {
-            sendResponse = ""
-            return
-        }
-        firstly(execute: web3.eth.accounts)
-            .then { method(makeParams()).send(gasLimit: EthereumQuantity(quantity: 21.gwei), from: $0.first!) }
-            .done { sendResponse = $0.hex() }
-            .catch { sendResponse = $0.localizedDescription }
-    }
-    
-    private func binding(for index: Int) -> Binding<String> {
-        return Binding(get: {
-            return inputs[index].1
-        }, set: {
-            inputs[index].1 = $0
-        })
-    }
-    
-    private func makeParams() -> [String] {
-        return inputs.map { $0.1 }
     }
     
     var body: some View {
@@ -201,17 +162,6 @@ struct ContentView: View {
                         .font(.headline)
                     TextField("RPC Port", text: $rpcPort)
                 }
-                // Wallet
-                VStack(spacing: 8) {
-                    Button("Connect Wallet", action: connect2web3)
-                        .disabled(web3 != nil)
-                        .frame(maxWidth: .infinity)
-                    Text(web3state)
-                        .multilineTextAlignment(.center)
-                        .frame(maxWidth: .infinity)
-                        .font(.footnote)
-                        .foregroundColor(.gray)
-                }
                 // Address
                 VStack(alignment: .leading) {
                     Text("Contract Address")
@@ -219,10 +169,15 @@ struct ContentView: View {
                     TextField("Contract Address", text: $contractAddress)
                         .lineLimit(2)
                 }
+                VStack(alignment: .leading) {
+                    Text("My Private Key")
+                        .font(.headline)
+                    TextField("Private Key", text: $myPrivateKey)
+                        .lineLimit(2)
+                }
                 // Contract
                 VStack(spacing: 8) {
-                    Button("Add Contract", action: addContract)
-                        .disabled(contract != nil)
+                    Button("Connect Blockchain", action: connect2web3)
                         .frame(maxWidth: .infinity)
                     Text(contractMessage)
                         .multilineTextAlignment(.center)
@@ -230,44 +185,13 @@ struct ContentView: View {
                         .font(.footnote)
                         .foregroundColor(.gray)
                 }
-                // Method
-                VStack(alignment: .leading) {
-                    Text("Method")
-                        .font(.headline)
-                    TextField("Method Name", text: $methodName)
-                        .lineLimit(1)
-                        .onChange(of: methodName, perform: methodNameOnChange(newValue:))
-                }
-                VStack {
-                    ForEach(0 ..< inputs.count, id: \.self) { index in
-                        Text(inputs[index].0)
-                            .font(.headline)
-                        TextField(inputs[index].0, text: binding(for: index))
-                            .lineLimit(2)
-                    }
-                }
                 // Call
                 VStack(spacing: 8) {
-                    Button("Call", action: callMethod)
-                        .disabled(!canCall)
+                    Button("Get ETH Balance", action: getEthBalance)
                         .frame(maxWidth: .infinity)
-                    Text(callResponse)
-                        .multilineTextAlignment(.center)
+                    Button("Get NFT Balance", action: getNftBalance)
                         .frame(maxWidth: .infinity)
-                        .font(.footnote)
-                        .foregroundColor(.gray)
-                    Button("Estimate", action: methodEstimated)
-                        .disabled(!canCall)
-                        .frame(maxWidth: .infinity)
-                    Text(estimateResponse)
-                        .multilineTextAlignment(.center)
-                        .frame(maxWidth: .infinity)
-                        .font(.footnote)
-                        .foregroundColor(.gray)
-                    Button("Send", action: sendMethod)
-                        .disabled(!canCall)
-                        .frame(maxWidth: .infinity)
-                    Text(sendResponse)
+                    Text(methodResponse)
                         .multilineTextAlignment(.center)
                         .frame(maxWidth: .infinity)
                         .font(.footnote)
@@ -286,6 +210,7 @@ struct ContentView: View {
             Spacer()
         }
         .padding()
+        .onAppear(perform: connect2web3)
     }
 }
 
