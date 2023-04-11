@@ -38,8 +38,11 @@ struct ContentView: View {
     
     @State var methodResponse = ""
     
+    @State var transactionPromise:  SolidityInvocation? // Promise<EthereumData>?
+    @State var transactionResponse = ""
+    
     @State var myPrivateKey = "0x7742f00f27407887563707673c4c0afaab1c87fbe6cabf5547aeb58fe2260cdd"
-    @State var otherPrivateKey = "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"
+    @State var otherAddress = "0x0E186C75C9F9c83F04F523FE34D3707Ba0D32fF3"
     
     func myPrint(_ items: Any...) {
         print(":::", items)
@@ -53,8 +56,13 @@ struct ContentView: View {
         
         contractAddress = "0xa4c02eC587071d37eEbb345332942E99E0499eD4"
         
+        erc721Contract = nil
         dynamicContract = nil
         contractMessage = ""
+        methodResponse = ""
+        
+        transactionPromise = nil
+        transactionResponse = ""
     }
     
     func connect2web3() {
@@ -129,6 +137,148 @@ struct ContentView: View {
             }
     }
     
+    func getMyTokenIdList() {
+        guard
+            let dynamicContract = dynamicContract,
+            let myPrivateKey = try? EthereumPrivateKey(hexPrivateKey: myPrivateKey),
+            let tokensOfOwnerMethod = dynamicContract["tokensOfOwner"]
+        else {
+            methodResponse = "get tokens of owner initializing failed."
+            return
+        }
+        tokensOfOwnerMethod(myPrivateKey.address)
+            .call()
+            .done { data in
+                methodResponse = data.description
+            }
+            .catch { error in
+                methodResponse = errorHandler(error)
+            }
+    }
+    
+    func estimateSetAuthorized() {
+        guard
+            let dynamicContract = dynamicContract,
+            let myPrivateKey = try? EthereumPrivateKey(hexPrivateKey: myPrivateKey),
+            let setAuthorizedMethod = dynamicContract["setAuthorized"]
+        else {
+            methodResponse = "estimate set authorized initializing failed."
+            return
+        }
+        setAuthorizedMethod(myPrivateKey.address, 1)
+            .estimateGas(from: myPrivateKey.address)
+            .done { qty in
+                methodResponse = "\(qty.quantity) gas will be used to set an address as authorized."
+                transactionPromise = setAuthorizedMethod(myPrivateKey.address, 1)
+            }
+            .catch { error in
+                methodResponse = errorHandler(error)
+            }
+    }
+    
+    func estimateMintNft() {
+        guard
+            let dynamicContract = dynamicContract,
+            let myPrivateKey = try? EthereumPrivateKey(hexPrivateKey: myPrivateKey),
+            let mintMethod = dynamicContract["mint"]
+        else {
+            methodResponse = "estimate mint initializing failed."
+            return
+        }
+        mintMethod(myPrivateKey.address, 1)
+            .estimateGas(from: myPrivateKey.address)
+            .done { qty in
+                methodResponse = "\(qty.quantity) gas will be used to mint a NFT."
+                transactionPromise = mintMethod(myPrivateKey.address, 1)
+            }
+            .catch { error in
+                methodResponse = errorHandler(error)
+            }
+    }
+    
+    func estimateTransfer() {
+        guard
+            let erc721Contract = erc721Contract,
+            let myPrivateKey = try? EthereumPrivateKey(hexPrivateKey: myPrivateKey),
+            let otherAddress = EthereumAddress(hexString: otherAddress)
+        else {
+            methodResponse = "Initializing failed."
+            return
+        }
+        erc721Contract
+            .transferFrom(from: myPrivateKey.address, to: otherAddress, tokenId: 3)
+            .estimateGas(from: myPrivateKey.address)
+            .done { qty in
+                methodResponse = "\(qty.quantity) gas will be used to transfer a NFT."
+                transactionPromise = erc721Contract
+                    .transferFrom(from: myPrivateKey.address ,to: otherAddress, tokenId: 3)
+            }
+            .catch { error in
+                methodResponse = errorHandler(error)
+            }
+    }
+    
+    func estimateSetApproval() {
+        guard
+            let erc721Contract = erc721Contract,
+            let myPrivateKey = try? EthereumPrivateKey(hexPrivateKey: myPrivateKey),
+            let otherAddress = EthereumAddress(hexString: otherAddress)
+        else {
+            methodResponse = "Initializing failed."
+            return
+        }
+        erc721Contract.approve(to: otherAddress, tokenId: 11)
+            .estimateGas(from: myPrivateKey.address)
+            .done { qty in
+                methodResponse = "\(qty.quantity) gas will be used to set approval."
+                transactionPromise = erc721Contract
+                    .approve(to: otherAddress, tokenId: 11)
+            }
+            .catch { error in
+                methodResponse = errorHandler(error)
+            }
+    }
+    
+    func executeEstimatedMethod() {
+        guard
+            let web3 = web3,
+            let transactionPromise = transactionPromise,
+            let myPrivateKey = try? EthereumPrivateKey(hexPrivateKey: myPrivateKey)
+        else {
+            transactionResponse = "execution initializing failed."
+            return
+        }
+        var tempQty = EthereumQuantity(quantity: 0)
+        var tempData: EthereumTransactionReceiptObject!
+        web3.eth.getBalance(address: myPrivateKey.address, block: .latest)
+            .then { qty in
+                tempQty = qty
+                return transactionPromise.send(from: myPrivateKey.address)
+            }
+            .then(web3.eth.getTransactionReceipt)
+            .then { data in
+                guard let data = data else {
+                    throw TestWalletError.general("the transaction failed.")
+                }
+                tempData = data
+                
+                return web3.eth.getBalance(address: myPrivateKey.address, block: .latest)
+            }
+            .done { qty in
+                let etherLoss = tempQty.quantity - qty.quantity
+                let gasPrice = etherLoss / tempData.cumulativeGasUsed.quantity
+                let etherUsed = Double(tempData.cumulativeGasUsed.quantity) * Double(gasPrice) / Double(1.gwei)
+                myPrint("gas used is \(tempData.cumulativeGasUsed.quantity) @ \(gasPrice) wei, so the ether used is \(etherUsed) gwei!")
+                transactionResponse = "\(etherUsed) gwei used to complete this transaction, congrats!"
+            }
+            .catch { error in
+                transactionResponse = errorHandler(error)
+            }
+            .finally {
+                self.transactionPromise = nil
+            }
+    }
+    
     private func errorHandler(_ error: Error) -> String {
         myPrint(error)
         if case .general(let reason) = error as? TestWalletError {
@@ -175,6 +325,12 @@ struct ContentView: View {
                     TextField("Private Key", text: $myPrivateKey)
                         .lineLimit(2)
                 }
+                VStack(alignment: .leading) {
+                    Text("Other Address")
+                        .font(.headline)
+                    TextField("Wallet Address", text: $otherAddress)
+                        .lineLimit(2)
+                }
                 // Contract
                 VStack(spacing: 8) {
                     Button("Connect Blockchain", action: connect2web3)
@@ -191,7 +347,24 @@ struct ContentView: View {
                         .frame(maxWidth: .infinity)
                     Button("Get NFT Balance", action: getNftBalance)
                         .frame(maxWidth: .infinity)
+                    Button("Get Owned NFT Token ID List", action: getMyTokenIdList)
+                        .frame(maxWidth: .infinity)
+                    Button("Estimate Gas For SetAuthorized", action: estimateSetAuthorized)
+                        .frame(maxWidth: .infinity)
+                    Button("Estimate Gas For Mint", action: estimateMintNft)
+                        .frame(maxWidth: .infinity)
+                    Button("Estimate Gas For Transfer", action: estimateTransfer)
+                        .frame(maxWidth: .infinity)
+                    Button("Estimate Gas For setApproval", action: estimateSetApproval)
+                        .frame(maxWidth: .infinity)
                     Text(methodResponse)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity)
+                        .font(.footnote)
+                        .foregroundColor(.gray)
+                    Button("Do What Just Estimated", action: executeEstimatedMethod)
+                        .disabled(transactionPromise == nil)
+                    Text(transactionResponse)
                         .multilineTextAlignment(.center)
                         .frame(maxWidth: .infinity)
                         .font(.footnote)
