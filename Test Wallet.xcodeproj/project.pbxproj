@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		30307E1B29E55C6100EC8555 /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = 30307E1A29E55C6100EC8555 /* Starscream */; };
+		30307E1D29E56DC800EC8555 /* WalletConnectService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30307E1C29E56DC800EC8555 /* WalletConnectService.swift */; };
+		30307E1F29E579F600EC8555 /* QRScannerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30307E1E29E579F600EC8555 /* QRScannerController.swift */; };
+		30307E2129E57AAD00EC8555 /* QRScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30307E2029E57AAD00EC8555 /* QRScannerView.swift */; };
 		30B11ABB29C9AE4600A6BBF8 /* Test_WalletApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B11ABA29C9AE4600A6BBF8 /* Test_WalletApp.swift */; };
 		30B11ABD29C9AE4600A6BBF8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B11ABC29C9AE4600A6BBF8 /* ContentView.swift */; };
 		30B11ABF29C9AE4700A6BBF8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 30B11ABE29C9AE4700A6BBF8 /* Assets.xcassets */; };
@@ -51,6 +55,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		30307E1C29E56DC800EC8555 /* WalletConnectService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletConnectService.swift; sourceTree = "<group>"; };
+		30307E1E29E579F600EC8555 /* QRScannerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScannerController.swift; sourceTree = "<group>"; };
+		30307E2029E57AAD00EC8555 /* QRScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScannerView.swift; sourceTree = "<group>"; };
+		30307E2229E57B2800EC8555 /* Test WalletDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Test WalletDebug.entitlements"; sourceTree = "<group>"; };
 		30B11AB729C9AE4600A6BBF8 /* Test Wallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Test Wallet.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		30B11ABA29C9AE4600A6BBF8 /* Test_WalletApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test_WalletApp.swift; sourceTree = "<group>"; };
 		30B11ABC29C9AE4600A6BBF8 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -81,6 +89,7 @@
 				30B11B0229CC5C4600A6BBF8 /* WalletConnectPush in Frameworks */,
 				30B11AFE29CC5C4600A6BBF8 /* WalletConnectNetworking in Frameworks */,
 				30B11AFA29CC5C4600A6BBF8 /* WalletConnectChat in Frameworks */,
+				30307E1B29E55C6100EC8555 /* Starscream in Frameworks */,
 				30B11B0029CC5C4600A6BBF8 /* WalletConnectPairing in Frameworks */,
 				30B11AEB29C9B14400A6BBF8 /* Web3PromiseKit in Frameworks */,
 				30B11AF829CC5C4600A6BBF8 /* WalletConnectAuth in Frameworks */,
@@ -132,6 +141,7 @@
 		30B11AB929C9AE4600A6BBF8 /* Test Wallet */ = {
 			isa = PBXGroup;
 			children = (
+				30307E2229E57B2800EC8555 /* Test WalletDebug.entitlements */,
 				30B11B0B29CD480300A6BBF8 /* Test-Wallet-Info.plist */,
 				30B11ABA29C9AE4600A6BBF8 /* Test_WalletApp.swift */,
 				30B11ABC29C9AE4600A6BBF8 /* ContentView.swift */,
@@ -139,6 +149,9 @@
 				30B11AC029C9AE4700A6BBF8 /* Test_Wallet.entitlements */,
 				30B11AC129C9AE4700A6BBF8 /* Preview Content */,
 				30B11AEC29C9B1C500A6BBF8 /* ViewModel.swift */,
+				30307E1C29E56DC800EC8555 /* WalletConnectService.swift */,
+				30307E1E29E579F600EC8555 /* QRScannerController.swift */,
+				30307E2029E57AAD00EC8555 /* QRScannerView.swift */,
 			);
 			path = "Test Wallet";
 			sourceTree = "<group>";
@@ -199,6 +212,7 @@
 				30B11B0529CC5C4600A6BBF8 /* WalletConnectVerify */,
 				30B11B0729CC5C4600A6BBF8 /* Web3Inbox */,
 				30B11B0929CC5C4600A6BBF8 /* Web3Wallet */,
+				30307E1A29E55C6100EC8555 /* Starscream */,
 			);
 			productName = "Test Wallet";
 			productReference = 30B11AB729C9AE4600A6BBF8 /* Test Wallet.app */;
@@ -275,6 +289,7 @@
 			packageReferences = (
 				30B11AE529C9B14400A6BBF8 /* XCRemoteSwiftPackageReference "Web3.swift" */,
 				30B11AF429CC5C4600A6BBF8 /* XCRemoteSwiftPackageReference "WalletConnectSwiftV2" */,
+				30307E1929E55C6100EC8555 /* XCRemoteSwiftPackageReference "Starscream" */,
 			);
 			productRefGroup = 30B11AB829C9AE4600A6BBF8 /* Products */;
 			projectDirPath = "";
@@ -321,7 +336,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				30B11ABD29C9AE4600A6BBF8 /* ContentView.swift in Sources */,
+				30307E1D29E56DC800EC8555 /* WalletConnectService.swift in Sources */,
+				30307E1F29E579F600EC8555 /* QRScannerController.swift in Sources */,
 				30B11AED29C9B1C500A6BBF8 /* ViewModel.swift in Sources */,
+				30307E2129E57AAD00EC8555 /* QRScannerView.swift in Sources */,
 				30B11ABB29C9AE4600A6BBF8 /* Test_WalletApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -473,7 +491,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "Test Wallet/Test_Wallet.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "Test Wallet/Test WalletDebug.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Test Wallet/Preview Content\"";
@@ -482,6 +500,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Test-Wallet-Info.plist";
+				INFOPLIST_KEY_NSCameraUsageDescription = "We need to access your camera for scanning QR code";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -523,6 +542,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Test-Wallet-Info.plist";
+				INFOPLIST_KEY_NSCameraUsageDescription = "We need to access your camera for scanning QR code";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -682,6 +702,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		30307E1929E55C6100EC8555 /* XCRemoteSwiftPackageReference "Starscream" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/daltoniam/Starscream";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
+			};
+		};
 		30B11AE529C9B14400A6BBF8 /* XCRemoteSwiftPackageReference "Web3.swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Boilertalk/Web3.swift.git";
@@ -701,6 +729,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		30307E1A29E55C6100EC8555 /* Starscream */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30307E1929E55C6100EC8555 /* XCRemoteSwiftPackageReference "Starscream" */;
+			productName = Starscream;
+		};
 		30B11AE629C9B14400A6BBF8 /* Web3 */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 30B11AE529C9B14400A6BBF8 /* XCRemoteSwiftPackageReference "Web3.swift" */;
