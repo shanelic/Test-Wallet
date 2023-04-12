@@ -26,6 +26,8 @@ enum TestWalletError: Error {
 
 struct ContentView: View {
     
+    @State private var showScanner = false
+    
     @State var rpcUrl = "http://10.14.67.4"
     @State var rpcPort = "7000"
     
@@ -372,6 +374,12 @@ struct ContentView: View {
                 VStack {
                     Button("RESET", action: reset)
                 }
+                // qrcode scanner
+                VStack {
+                    Button("QRCode", action: {
+                        showScanner.toggle()
+                    })
+                }
             }
             .padding()
             .background {
@@ -382,6 +390,11 @@ struct ContentView: View {
         }
         .padding()
         .onAppear(perform: connect2web3)
+//        .buttonStyle(.borderedProminent)
+        .sheet(isPresented: $showScanner) {
+            QRScannerView(shown: $showScanner)
+//                .presentationDetents([.medium, .large])
+        }
     }
 }
 
