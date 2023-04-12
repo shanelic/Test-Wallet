@@ -10,7 +10,7 @@ import AVFoundation
 
 struct QRScannerView: View {
     
-    @State var scanResult = "No QR code detected"
+    @Binding var scanResult: String
     @Binding var shown: Bool
 
     var body: some View {
