@@ -7,6 +7,10 @@
 
 import Foundation
 
+func myPrint(_ items: Any...) {
+    print(":::", items)
+}
+
 let ABI = """
 {
     "_format": "hh-sol-artifact-1",

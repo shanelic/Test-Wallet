@@ -44,9 +44,6 @@ struct ContentView: View {
     @State var myPrivateKey = "0x7742f00f27407887563707673c4c0afaab1c87fbe6cabf5547aeb58fe2260cdd"
     @State var otherAddress = "0x0E186C75C9F9c83F04F523FE34D3707Ba0D32fF3"
     
-    func myPrint(_ items: Any...) {
-        print(":::", items)
-    }
     
     func reset() {
         rpcUrl = "http://10.14.67.4"
