@@ -59,24 +59,22 @@ class Coordinator: NSObject, AVCaptureMetadataOutputObjectsDelegate {
     func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection) {
 
         // Check if the metadataObjects array is not nil and it contains at least one object.
-        if metadataObjects.count == 0 {
-            scanResult = "No QR code detected"
+        if metadataObjects.isEmpty {
             return
         }
 
         // Get the metadata object.
-        let metadataObj = metadataObjects[0] as! AVMetadataMachineReadableCodeObject
-
-        if metadataObj.type == AVMetadataObject.ObjectType.qr,
-           let result = metadataObj.stringValue {
-
-            scanResult = result
-            print(scanResult)
-            
-            if result.hasPrefix("wc:") {
-                myPrint(result)
-                shown.toggle()
+        let result = metadataObjects
+            .filter { object in
+                guard let object = object as? AVMetadataMachineReadableCodeObject else { return false }
+                return object.type == .qr
             }
+            .compactMap { ($0 as! AVMetadataMachineReadableCodeObject).stringValue }
+        
+        if let walletConnectResult = result.first(where: { $0.hasPrefix("wc:") }) {
+            shown.toggle()
+            scanResult = walletConnectResult
+            myPrint(walletConnectResult)
         }
     }
 }
