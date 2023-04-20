@@ -121,6 +121,21 @@ class WalletConnectService {
         }
     }
     
+    private func personalSign(message: String, privateKey: EthereumPrivateKey) throws -> String {
+        let (v, r, s) = try privateKey.sign(message: dataToHash(message))
+        let hexString = "0x" + r.hex + s.hex + String(v + 27, radix: 16)
+        return hexString
+        
+        func dataToHash(_ message: String) -> Bytes {
+            let prefix = "\u{19}Ethereum Signed Message:\n"
+            let messageData = Data(hex: message)
+            let prefixData = (prefix + String(messageData.count)).data(using: .utf8)!
+            let prefixedMessageData = prefixData + messageData
+            let dataToHash = Bytes(hex: prefixedMessageData.hex)
+            return dataToHash
+        }
+    }
+    
     func parseSessionRequest(_ request: Request) {
         guard let myPrivateKey = try? EthereumPrivateKey(hexPrivateKey: MY_PRIVATE_KEY) else {
             return
@@ -130,6 +145,10 @@ class WalletConnectService {
             do {
                 let params = try request.params.get([String].self)
                 myPrint("plain text: " + params[0].hexToBytes().makeString())
+                let result = try personalSign(message: params[0], privateKey: myPrivateKey)
+                Task.detached { [unowned self] in
+                    await respondRequest(request, content: AnyCodable(result))
+                }
             } catch {
                 myPrint("error occurred on personal signing: ", error.localizedDescription)
                 Task.detached { [unowned self] in
