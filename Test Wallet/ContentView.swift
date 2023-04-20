@@ -50,6 +50,8 @@ struct ContentView: View {
     var service = WalletConnectService()
     
     func reset() {
+        
+        scannedWalletConnect = ""
         rpcUrl = "http://10.14.67.4"
         rpcPort = "7000"
         
@@ -64,6 +66,13 @@ struct ContentView: View {
         
         transactionPromise = nil
         transactionResponse = ""
+        
+        for wallet in service.getAllConnectedWallets() {
+            myPrint(wallet)
+        }
+        Task.detached {
+            await service.disconnectWallet()
+        }
     }
     
     func connect2web3() {
@@ -282,6 +291,7 @@ struct ContentView: View {
     
     private func errorHandler(_ error: Error) -> String {
         myPrint(error)
+        transactionPromise = nil
         if case .general(let reason) = error as? TestWalletError {
             return reason
         } else if let error = error as? RPCResponse<EthereumQuantity>.Error {
