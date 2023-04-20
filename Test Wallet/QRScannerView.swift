@@ -74,7 +74,6 @@ class Coordinator: NSObject, AVCaptureMetadataOutputObjectsDelegate {
         if let walletConnectResult = result.first(where: { $0.hasPrefix("wc:") }) {
             shown.toggle()
             scanResult = walletConnectResult
-            myPrint(walletConnectResult)
         }
     }
 }
