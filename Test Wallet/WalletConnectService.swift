@@ -120,6 +120,29 @@ class WalletConnectService {
         }
     }
     
+    func parseSessionRequest(_ request: Request) {
+        guard let myPrivateKey = try? EthereumPrivateKey(hexPrivateKey: MY_PRIVATE_KEY) else {
+            return
+        }
+        switch request.method {
+        case "personal_sign":
+        case "eth_signTypedData":
+        case "eth_signTransaction":
+        default:
+            Task.detached { [unowned self] in
+                await rejectRequest(request)
+            }
+        }
+    }
+    
+    func rejectRequest(_ request: Request) async {
+        do {
+            try await Web3Wallet.instance.reject(requestId: request.id)
+        } catch {
+            myPrint("[web3wallet] rejecting request failed: ", error.localizedDescription)
+        }
+    }
+    
     func connectWallet(url: String) async {
         guard url.hasPrefix("wc:"), let uri = WalletConnectURI(string: url) else {
             myPrint("wallet connect uri initializing failed", url.hasPrefix("wc:"), url)
