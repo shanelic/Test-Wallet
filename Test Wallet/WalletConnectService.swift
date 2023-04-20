@@ -127,6 +127,15 @@ class WalletConnectService {
         }
         switch request.method {
         case "personal_sign":
+            do {
+                let params = try request.params.get([String].self)
+                myPrint("plain text: " + params[0].hexToBytes().makeString())
+            } catch {
+                myPrint("error occurred on personal signing: ", error.localizedDescription)
+                Task.detached { [unowned self] in
+                    await rejectRequest(request)
+                }
+            }
         case "eth_signTypedData":
         case "eth_signTransaction":
         default:
