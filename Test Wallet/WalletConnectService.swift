@@ -8,7 +8,7 @@
 import Foundation
 import Web3Wallet
 import Starscream
-import WalletConnectRelay
+import Combine
 import Web3
 import CryptoSwift
 
@@ -42,6 +42,8 @@ class WalletConnectService {
     
     let projectId = "2bb215526074ffd643daeac97beb0993"
     
+    private var publishers = [AnyCancellable]()
+    
     init() {
         let metadata = AppMetadata(name: "Test Wallet", description: "The Test Wallet For POMO Network demo", url: "https://pomo.network", icons: [])
         Networking.configure(projectId: projectId, socketFactory: DefaultSocketFactory())
@@ -50,5 +52,41 @@ class WalletConnectService {
     
     private func web3WalletInitializer(_ metadata: AppMetadata) {
         Web3Wallet.configure(metadata: metadata, crypto: DefaultCryptoProvider(), environment: .sandbox)
+        
+        Web3Wallet.instance.sessionProposalPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { proposal in
+                myPrint("[web3wallet] session proposal below:", proposal)
+                if let myPrivateKey = try? EthereumPrivateKey(hexPrivateKey: MY_PRIVATE_KEY),
+                   let account = Account(chainIdentifier: Chain.Ethereum_Goerli.eip155, address: myPrivateKey.address.hex(eip55: true))
+                {
+                    Task.detached { [unowned self] in
+                    }
+                } else {
+                    myPrint("[web3wallet] initial account failed.")
+                }
+            }
+            .store(in: &publishers)
+        
+        Web3Wallet.instance.sessionSettlePublisher
+            .receive(on: DispatchQueue.main)
+            .sink { settle in
+                myPrint("[web3wallet] settle below:", settle)
+            }
+            .store(in: &publishers)
+        
+        Web3Wallet.instance.sessionRequestPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [unowned self] request in
+                myPrint("[web3wallet] session request \(request.method) below: ", request)
+            }
+            .store(in: &publishers)
+        
+        Web3Wallet.instance.authRequestPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { request in
+                myPrint("[web3wallet] auth request below:", request)
+            }
+            .store(in: &publishers)
     }
 }
