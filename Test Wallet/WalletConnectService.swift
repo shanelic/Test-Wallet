@@ -188,11 +188,53 @@ class WalletConnectService {
                 await respondRequest(request, content: AnyCodable("are you sure?"))
             }
         case "eth_signTransaction":
+            // FIXME: "Invalid remainder", means the signature is invalid
+            do {
+                let param = try request.params.get([Dictionary<String, EthereumValue>].self)
+                guard let tx = param.first else {
+                    return
+                }
+                let result = try signTransaction(tx, privateKey: myPrivateKey)
+                Task.detached { [unowned self] in
+                    await respondRequest(request, content: AnyCodable(result))
+                }
+            } catch {
+                myPrint("error occurred on signing transaction: ", error.localizedDescription)
+                Task.detached { [unowned self] in
+                    await rejectRequest(request)
+                }
+            }
         default:
             Task.detached { [unowned self] in
                 await rejectRequest(request)
             }
         }
+    }
+    
+    private func signTransaction(_ transaction: Dictionary<String, EthereumValue>, privateKey: EthereumPrivateKey) throws -> String {
+        guard
+            let nonce = transaction["nonce"]?.ethereumQuantity,
+            let gasPrice = transaction["gasPrice"]?.ethereumQuantity,
+            let gasLimit = transaction["gasLimit"]?.ethereumQuantity,
+            let from = transaction["from"],
+            let to = transaction["to"],
+            let value = transaction["value"]?.ethereumQuantity,
+            let data = transaction["data"]?.ethereumData
+        else {
+            throw TestWalletError.general("Transaction construct failed.")
+        }
+        
+        let signedTx = try EthereumTransaction(
+            nonce: nonce,
+            gasPrice: gasPrice,
+            gasLimit: gasLimit,
+            from: try EthereumAddress(ethereumValue: from),
+            to: try EthereumAddress(ethereumValue: to),
+            value: value,
+            data: data
+        ).sign(with: privateKey, chainId: Chain.Ethereum_Goerli.chainId.ethQty)
+        
+        return signedTx.r.hex() + String(signedTx.s.quantity, radix: 16) + String(signedTx.v.quantity, radix: 16)
     }
     
     func respondRequest(_ request: Request, content: AnyCodable) async {
