@@ -80,6 +80,7 @@ class WalletConnectService {
             .receive(on: DispatchQueue.main)
             .sink { [unowned self] request in
                 myPrint("[web3wallet] session request \(request.method) below: ", request)
+                parseSessionRequest(request)
             }
             .store(in: &publishers)
         
