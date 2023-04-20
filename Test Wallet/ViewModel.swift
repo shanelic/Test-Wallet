@@ -6,9 +6,35 @@
 //
 
 import Foundation
+import Web3
+import Web3Wallet
 
 func myPrint(_ items: Any...) {
     print(":::", items)
+}
+
+enum Chain: Int {
+    case Ethereum = 1
+    case Ethereum_Goerli = 5
+    case PomoChain = 1337
+    
+    var eip155: String {
+        return "eip155:\(self.rawValue)"
+    }
+    
+    var chainId: Int {
+        return self.rawValue
+    }
+    
+    var blockchain: Blockchain {
+        Blockchain(self.eip155)!
+    }
+}
+
+extension Int {
+    var ethQty: EthereumQuantity {
+        return EthereumQuantity(quantity: BigUInt(self))
+    }
 }
 
 let ABI = """
