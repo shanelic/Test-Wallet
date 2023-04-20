@@ -61,6 +61,7 @@ class WalletConnectService {
                    let account = Account(chainIdentifier: Chain.Ethereum_Goerli.eip155, address: myPrivateKey.address.hex(eip55: true))
                 {
                     Task.detached { [unowned self] in
+                        await approveProposal(proposal, by: account)
                     }
                 } else {
                     myPrint("[web3wallet] initial account failed.")
@@ -88,6 +89,35 @@ class WalletConnectService {
                 myPrint("[web3wallet] auth request below:", request)
             }
             .store(in: &publishers)
+    }
+    
+    func approveProposal(_ proposal: Session.Proposal, by account: Account) async {
+        do {
+            let goerli = Chain.Ethereum_Goerli.blockchain
+            guard let requiredEip155 = proposal.requiredNamespaces["eip155"] else {
+                myPrint("[web3wallet] approving proposal: required eip-155 initializing failed.")
+                return
+            }
+            guard requiredEip155.chains?.contains(goerli) ?? false, requiredEip155.chains?.count ?? 0 == 1 else {
+                myPrint("[web3wallet] the proposal requires blockchain(s) we are not supporting yet.")
+                myPrint("[web3wallet] the blockchain we supports only now is \(goerli).")
+                return
+            }
+            let namespace = try AutoNamespaces.build(
+                sessionProposal: proposal,
+                chains: [
+                    goerli
+                ],
+                methods: requiredEip155.methods.sorted(),
+                events: requiredEip155.events.sorted(),
+                accounts: [
+                    account
+                ]
+            )
+            try await Web3Wallet.instance.approve(proposalId: proposal.id, namespaces: namespace)
+        } catch {
+            myPrint("[web3wallet] approving proposal failed: ", error.localizedDescription)
+        }
     }
     
     func connectWallet(url: String) async {
