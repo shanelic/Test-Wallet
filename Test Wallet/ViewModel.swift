@@ -13,6 +13,8 @@ func myPrint(_ items: Any...) {
     print(":::", items)
 }
 
+let MY_PRIVATE_KEY = "0x7742f00f27407887563707673c4c0afaab1c87fbe6cabf5547aeb58fe2260cdd"
+
 enum Chain: Int {
     case Ethereum = 1
     case Ethereum_Goerli = 5
