@@ -136,6 +136,13 @@ class WalletConnectService {
         }
     }
     
+    // FIXME: invalid signature
+    private func signTypedData(_ typedData: Data, privateKey: EthereumPrivateKey) throws -> String {
+        let (v, r, s) = try privateKey.sign(message: typedData.bytes)
+        let hexString = "0x" + r.hex + s.hex + String(v + 27, radix: 16)
+        return hexString
+    }
+    
     func parseSessionRequest(_ request: Request) {
         guard let myPrivateKey = try? EthereumPrivateKey(hexPrivateKey: MY_PRIVATE_KEY) else {
             return
@@ -156,6 +163,26 @@ class WalletConnectService {
                 }
             }
         case "eth_signTypedData":
+            // FIXME: signature failed
+            do {
+                let params = try request.params.get([String].self)
+                let typedString = params[1]
+                guard let typedData = typedString.data(using: .utf8) else {
+                    return
+                }
+                let result = try signTypedData(typedData, privateKey: myPrivateKey)
+                myPrint(typedString, result)
+                Task.detached { [unowned self] in
+                    await respondRequest(request, content: AnyCodable(result))
+                }
+            } catch {
+                myPrint("error occurred on signing typed data: ", error.localizedDescription)
+                Task.detached { [unowned self] in
+                    await rejectRequest(request)
+                }
+            }
+            break
+        case "eth_sendTransaction":
         case "eth_signTransaction":
         default:
             Task.detached { [unowned self] in
