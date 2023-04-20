@@ -391,7 +391,15 @@ struct ContentView: View {
         }
         .padding()
         .onAppear(perform: connect2web3)
-//        .buttonStyle(.borderedProminent)
+        .onChange(of: scannedWalletConnect) { newValue in
+            guard !newValue.isEmpty else {
+                return
+            }
+            Task.detached {
+                await service.connectWallet(url: newValue)
+            }
+            scannedWalletConnect = ""
+        }
         .sheet(isPresented: $showScanner) {
             QRScannerView(scanResult: $scannedWalletConnect, shown: $showScanner)
                 .presentationDetents([.medium])
