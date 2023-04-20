@@ -131,4 +131,37 @@ class WalletConnectService {
             myPrint("web3wallet pairing", error.localizedDescription)
         }
     }
+    
+    func getAllConnectedWallets() -> [Pairing] {
+        return Web3Wallet.instance.getPairings()
+    }
+    
+    func disconnectWallet(_ topic: String? = nil) async {
+        if let topic {
+            await disconnectSession(topic)
+        } else {
+            for session in Web3Wallet.instance.getSessions() {
+                await disconnectSession(session.topic)
+            }
+            for pairing in Web3Wallet.instance.getPairings() {
+                await disconnectPairing(pairing.topic)
+            }
+        }
+    }
+    
+    private func disconnectPairing(_ pairing: String) async {
+        do {
+            try await Web3Wallet.instance.disconnectPairing(topic: pairing)
+        } catch {
+            myPrint("error occurred on disconnecting pairing: ", error.localizedDescription)
+        }
+    }
+    
+    private func disconnectSession(_ session: String) async {
+        do {
+            try await Web3Wallet.instance.disconnect(topic: session)
+        } catch {
+            myPrint("error occurred on disconnecting session: ", error.localizedDescription)
+        }
+    }
 }
