@@ -89,4 +89,16 @@ class WalletConnectService {
             }
             .store(in: &publishers)
     }
+    
+    func connectWallet(url: String) async {
+        guard url.hasPrefix("wc:"), let uri = WalletConnectURI(string: url) else {
+            myPrint("wallet connect uri initializing failed", url.hasPrefix("wc:"), url)
+            return
+        }
+        do {
+            try await Web3Wallet.instance.pair(uri: uri)
+        } catch {
+            myPrint("web3wallet pairing", error.localizedDescription)
+        }
+    }
 }
