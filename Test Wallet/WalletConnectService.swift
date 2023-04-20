@@ -164,6 +164,14 @@ class WalletConnectService {
         }
     }
     
+    func respondRequest(_ request: Request, content: AnyCodable) async {
+        do {
+            try await Web3Wallet.instance.respond(topic: request.topic, requestId: request.id, response: .response(content))
+        } catch {
+            myPrint("[web3wallet] responding request failed: ", error.localizedDescription)
+        }
+    }
+    
     func rejectRequest(_ request: Request) async {
         do {
             try await Web3Wallet.instance.reject(requestId: request.id)
