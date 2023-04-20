@@ -183,6 +183,10 @@ class WalletConnectService {
             }
             break
         case "eth_sendTransaction":
+            // TODO: should send the transaction to web3
+            Task.detached { [unowned self] in
+                await respondRequest(request, content: AnyCodable("are you sure?"))
+            }
         case "eth_signTransaction":
         default:
             Task.detached { [unowned self] in
