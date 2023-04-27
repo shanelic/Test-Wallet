@@ -299,7 +299,13 @@ struct ContentView: View {
         } else if let error = error as? RPCResponse<EthereumData>.Error {
             return error.message
         } else if case .invalidInvocation = error as? InvocationError {
-            return (error as! InvocationError).localizedDescription
+            return (error as! InvocationError).localizedDescription + " invalid invocation"
+        } else if case .contractNotDeployed = error as? InvocationError {
+            return (error as! InvocationError).localizedDescription + " contract not deployed"
+        } else if case .encodingError = error as? InvocationError {
+            return (error as! InvocationError).localizedDescription + " encoding error"
+        } else if case .invalidConfiguration = error as? InvocationError {
+            return (error as! InvocationError).localizedDescription + " invalid configuration"
         } else {
             return error.localizedDescription
         }
