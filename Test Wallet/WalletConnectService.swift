@@ -94,20 +94,22 @@ class WalletConnectService {
     
     func approveProposal(_ proposal: Session.Proposal, by account: Account) async {
         do {
+            let pomo = Chain.PomoChain.blockchain
             let goerli = Chain.Ethereum_Goerli.blockchain
             guard let requiredEip155 = proposal.requiredNamespaces["eip155"] else {
                 myPrint("[web3wallet] approving proposal: required eip-155 initializing failed.")
                 return
             }
-            guard requiredEip155.chains?.contains(goerli) ?? false, requiredEip155.chains?.count ?? 0 == 1 else {
+            guard requiredEip155.chains?.contains(pomo) ?? false || requiredEip155.chains?.contains(goerli) ?? false else {
                 myPrint("[web3wallet] the proposal requires blockchain(s) we are not supporting yet.")
-                myPrint("[web3wallet] the blockchain we supports only now is \(goerli).")
+                myPrint("[web3wallet] the blockchains we support only now are \(pomo) and \(goerli).")
                 return
             }
             let namespace = try AutoNamespaces.build(
                 sessionProposal: proposal,
                 chains: [
-                    goerli
+                    pomo,
+                    goerli,
                 ],
                 methods: requiredEip155.methods.sorted(),
                 events: requiredEip155.events.sorted(),
