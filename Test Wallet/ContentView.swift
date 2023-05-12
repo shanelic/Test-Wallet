@@ -29,8 +29,8 @@ struct ContentView: View {
     @State private var showScanner = false
     @State private var scannedWalletConnect = ""
     
-    @State var rpcUrl = "http://10.14.67.4"
-    @State var rpcPort = "7000"
+    @State var rpcUrl = RPC_URL
+    @State var rpcPort = RPC_PORT
     
     @State var web3: Web3?
     @State var contractAddress = "0xa4c02eC587071d37eEbb345332942E99E0499eD4"
@@ -53,8 +53,8 @@ struct ContentView: View {
     func reset() {
         
         scannedWalletConnect = ""
-        rpcUrl = "http://10.14.67.4"
-        rpcPort = "7000"
+        rpcUrl = RPC_URL
+        rpcPort = RPC_PORT
         
         web3 = nil
         
