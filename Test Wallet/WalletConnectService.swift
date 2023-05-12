@@ -263,7 +263,7 @@ class WalletConnectService {
         do {
             try await Web3Wallet.instance.pair(uri: uri)
         } catch {
-            myPrint("web3wallet pairing", error.localizedDescription)
+            myPrint("web3wallet pairing", error)
         }
     }
     

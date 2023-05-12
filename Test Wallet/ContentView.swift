@@ -34,6 +34,7 @@ struct ContentView: View {
     
     @State var web3: Web3?
     @State var contractAddress = "0xa4c02eC587071d37eEbb345332942E99E0499eD4"
+    @State var erc20Contract: GenericERC20Contract?
     @State var erc721Contract: GenericERC721Contract?
     @State var dynamicContract: DynamicContract?
     
@@ -60,6 +61,7 @@ struct ContentView: View {
         contractAddress = "0xa4c02eC587071d37eEbb345332942E99E0499eD4"
         
         erc721Contract = nil
+        erc20Contract = nil
         dynamicContract = nil
         contractMessage = ""
         methodResponse = ""
@@ -104,6 +106,15 @@ struct ContentView: View {
                     }
                     dynamicContract = try web3.eth.Contract(json: abi_data, abiKey: nil, address: address)
                     erc721Contract = web3.eth.Contract(type: GenericERC721Contract.self, address: address)
+                    erc20Contract = web3.eth.Contract(type: GenericERC20Contract.self)
+                    
+                    erc20Contract?.symbol().call()
+                        .done { data in
+                            myPrint("erc20 contract symbol", data)
+                        }
+                        .catch { error in
+                            myPrint("error on erc20", errorHandler(error))
+                        }
                 }
             }
             .catch { error in
