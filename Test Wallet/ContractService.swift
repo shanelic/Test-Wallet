@@ -6,3 +6,101 @@
 //
 
 import Foundation
+import Web3ContractABI
+import Web3
+
+class ContractService {
+    
+    public static var shared = ContractService()
+    private init() {}
+    
+    public func setup(rpcUrl: String) {
+        self.web3 = Web3(rpcURL: rpcUrl)
+    }
+    
+    private var web3: Web3?
+    private var contracts: [String: EthereumContract] = [:]
+    
+    public func add20Contract(name: String, address: EthereumAddress, abiData: Data, abiKey: String? = nil) {
+        guard let web3 else { return }
+        guard !contracts.keys.contains(name) else { return }
+        contracts[name] = web3.eth.Contract(type: GenericERC20Contract.self, address: address)
+    }
+    
+    public func add721Contract(name: String, address: EthereumAddress, abiData: Data, abiKey: String? = nil) {
+        guard let web3 else { return }
+        guard !contracts.keys.contains(name) else { return }
+        contracts[name] = web3.eth.Contract(type: GenericERC721Contract.self, address: address)
+    }
+    
+    public func addDynamicContract(name: String, address: EthereumAddress, abiData: Data, abiKey: String? = nil) {
+        guard let web3 else { return }
+        guard !contracts.keys.contains(name) else { return }
+        guard let contract = try? web3.eth.Contract(json: abiData, abiKey: abiKey, address: address) else { return }
+        contracts[name] = contract
+    }
+    
+    public func getDynamicMethods(name: String) -> [String] {
+        guard let contract = contracts[name] as? DynamicContract else {
+            return []
+        }
+        return contract.methods.keys.sorted()
+    }
+    
+    public func getDynamicMethodInputs(name: String, method: String) -> [String: SolidityType] {
+        guard
+            let contract = contracts[name] as? DynamicContract,
+            let method = contract.methods[method]
+        else {
+            return [:]
+        }
+        return method.inputs.reduce(into: [:]) { $0[$1.name] = $1.type }
+    }
+    
+    public func makeDynamicMethodRequest(name: String, method: String, inputs: [String]) -> SolidityInvocation? {
+        guard
+            let contract = contracts[name] as? DynamicContract,
+            let method = contract.methods[method] as? BetterInvocation
+        else {
+            return nil
+        }
+        return method.betterInvoke(inputs)
+    }
+    
+    func test() {
+        if let test = makeDynamicMethodRequest(name: "", method: "", inputs: []) {
+            
+        }
+    }
+}
+
+// MARK: Dynamic Contract Parsing
+extension ContractService {
+    
+}
+
+public protocol BetterInvocation {
+    /// Invokes this function with the provided values
+    ///
+    /// - Parameter inputs: Input values. Must be in the correct order.
+    /// - Returns: Invocation object
+    func betterInvoke(_ inputs: [ABIEncodable]) -> SolidityInvocation
+}
+
+extension SolidityConstantFunction: BetterInvocation {
+    public func betterInvoke(_ inputs: [ABIEncodable]) -> SolidityInvocation {
+        return SolidityReadInvocation(method: self, parameters: inputs, handler: handler)
+    }
+}
+
+extension SolidityNonPayableFunction: BetterInvocation {
+    public func betterInvoke(_ inputs: [ABIEncodable]) -> SolidityInvocation {
+        return SolidityReadInvocation(method: self, parameters: inputs, handler: handler)
+    }
+}
+
+extension SolidityPayableFunction: BetterInvocation {
+    public func betterInvoke(_ inputs: [ABIEncodable]) -> SolidityInvocation {
+        return SolidityReadInvocation(method: self, parameters: inputs, handler: handler)
+    }
+}
