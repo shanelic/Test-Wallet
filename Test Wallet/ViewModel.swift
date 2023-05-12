@@ -16,6 +16,8 @@ func myPrint(_ items: Any...) {
 let RPC_URL  = "https://dev-ganache.pomo.network/"
 let RPC_PORT = "9527"
 
+let CONTRACT_ADDRESS = "0x09430eF1032bBB52c4F60BC00Bb0AaC1dfEd3972"
+
 let MY_PRIVATE_KEY = "0x7742f00f27407887563707673c4c0afaab1c87fbe6cabf5547aeb58fe2260cdd"
 
 enum Chain: Int {

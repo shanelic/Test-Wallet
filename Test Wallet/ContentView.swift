@@ -33,7 +33,7 @@ struct ContentView: View {
     @State var rpcPort = RPC_PORT
     
     @State var web3: Web3?
-    @State var contractAddress = "0xa4c02eC587071d37eEbb345332942E99E0499eD4"
+    @State var contractAddress = CONTRACT_ADDRESS
     @State var erc20Contract: GenericERC20Contract?
     @State var erc721Contract: GenericERC721Contract?
     @State var dynamicContract: DynamicContract?
@@ -58,7 +58,7 @@ struct ContentView: View {
         
         web3 = nil
         
-        contractAddress = "0xa4c02eC587071d37eEbb345332942E99E0499eD4"
+        contractAddress = CONTRACT_ADDRESS
         
         erc721Contract = nil
         erc20Contract = nil
