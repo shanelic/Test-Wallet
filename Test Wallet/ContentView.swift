@@ -97,8 +97,10 @@ struct ContentView: View {
                 if code.hex() == "0x" {
                     throw TestWalletError.general("The Address provided is not a contract.")
                 } else {
-                    guard let abi_url = Bundle.main.url(forResource: "abi", withExtension: "json"),
-                        let abi_data = try? Data(contentsOf: abi_url) else {
+                    guard
+                        let abi_url = Bundle.main.url(forResource: "1155abi", withExtension: "json"),
+                        let abi_data = try? Data(contentsOf: abi_url)
+                    else {
                         throw TestWalletError.general("ABI json file loading failed.")
                     }
                     guard let address = EthereumAddress(hexString: contractAddress) else {

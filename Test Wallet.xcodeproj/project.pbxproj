@@ -11,6 +11,7 @@
 		30307E1D29E56DC800EC8555 /* WalletConnectService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30307E1C29E56DC800EC8555 /* WalletConnectService.swift */; };
 		30307E1F29E579F600EC8555 /* QRScannerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30307E1E29E579F600EC8555 /* QRScannerController.swift */; };
 		30307E2129E57AAD00EC8555 /* QRScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30307E2029E57AAD00EC8555 /* QRScannerView.swift */; };
+		3098773E2A0E4266009FD559 /* 1155abi.json in Resources */ = {isa = PBXBuildFile; fileRef = 3098773D2A0E4266009FD559 /* 1155abi.json */; };
 		309877402A0E474F009FD559 /* ContractService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3098773F2A0E474F009FD559 /* ContractService.swift */; };
 		30B11ABB29C9AE4600A6BBF8 /* Test_WalletApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B11ABA29C9AE4600A6BBF8 /* Test_WalletApp.swift */; };
 		30B11ABD29C9AE4600A6BBF8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B11ABC29C9AE4600A6BBF8 /* ContentView.swift */; };
@@ -60,6 +61,7 @@
 		30307E1E29E579F600EC8555 /* QRScannerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScannerController.swift; sourceTree = "<group>"; };
 		30307E2029E57AAD00EC8555 /* QRScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScannerView.swift; sourceTree = "<group>"; };
 		30307E2229E57B2800EC8555 /* Test WalletDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Test WalletDebug.entitlements"; sourceTree = "<group>"; };
+		3098773D2A0E4266009FD559 /* 1155abi.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = 1155abi.json; sourceTree = "<group>"; };
 		3098773F2A0E474F009FD559 /* ContractService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContractService.swift; sourceTree = "<group>"; };
 		30B11AB729C9AE4600A6BBF8 /* Test Wallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Test Wallet.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		30B11ABA29C9AE4600A6BBF8 /* Test_WalletApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test_WalletApp.swift; sourceTree = "<group>"; };
@@ -122,6 +124,7 @@
 			isa = PBXGroup;
 			children = (
 				30B11AF229C9BB9600A6BBF8 /* abi.json */,
+				3098773D2A0E4266009FD559 /* 1155abi.json */,
 				30B11AF029C9BB0600A6BBF8 /* PomoNetwork.json */,
 				30B11AB929C9AE4600A6BBF8 /* Test Wallet */,
 				30B11ACB29C9AE4700A6BBF8 /* Test WalletTests */,
@@ -314,6 +317,7 @@
 				30B11AF129C9BB0600A6BBF8 /* PomoNetwork.json in Resources */,
 				30B11AC329C9AE4700A6BBF8 /* Preview Assets.xcassets in Resources */,
 				30B11ABF29C9AE4700A6BBF8 /* Assets.xcassets in Resources */,
+				3098773E2A0E4266009FD559 /* 1155abi.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
