@@ -23,6 +23,29 @@ let MY_PRIVATE_KEY = "0x7742f00f27407887563707673c4c0afaab1c87fbe6cabf5547aeb58f
 let ETHERSCAN_API_KEY = "QNCD24AX3PTV5B3KMUP5FN95WE1JWZCIBS"
 let OPENSEA_API_KEY = "c823fdee93814f7abd5492604697e9c8"
 
+enum ERC: String, Codable {
+    case ERC20
+    case ERC721
+    case ERC1155
+    case unknown
+    
+    init(_ rawValue: String) {
+        switch rawValue
+            .uppercased()
+            .replacingOccurrences(of: "-", with: "")
+        {
+        case "ERC20":
+            self = .ERC20
+        case "ERC721":
+            self = .ERC721
+        case "ERC1155":
+            self = .ERC1155
+        default:
+            self = .unknown
+        }
+    }
+}
+
 enum Chain: Int {
     case Ethereum = 1
     case Ethereum_Goerli = 5

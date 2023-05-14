@@ -32,6 +32,18 @@ class ContractService {
                     }
                 } receiveValue: { collections in
                     print("--- collections from opensea", collections)
+                    for collection in collections {
+                        for contract in collection.primaryAssetContracts {
+                            switch contract.schemaName {
+                            case .ERC721:
+                                guard let contractAddress = EthereumAddress(hexString: contract.address) else { continue }
+                                self.add721Contract(name: "\(contract.name)-\(contract.address)", address: contractAddress)
+                                print("--- contracts saved", self.getContracts())
+                            default:
+                                break
+                            }
+                        }
+                    }
                 }
                 .store(in: &cancellables)
         } else {
@@ -43,13 +55,13 @@ class ContractService {
     private var web3: Web3?
     private var contracts: [String: EthereumContract] = [:]
     
-    public func add20Contract(name: String, address: EthereumAddress, abiData: Data, abiKey: String? = nil) {
+    public func add20Contract(name: String, address: EthereumAddress) {
         guard let web3 else { return }
         guard !contracts.keys.contains(name) else { return }
         contracts[name] = web3.eth.Contract(type: GenericERC20Contract.self, address: address)
     }
     
-    public func add721Contract(name: String, address: EthereumAddress, abiData: Data, abiKey: String? = nil) {
+    public func add721Contract(name: String, address: EthereumAddress) {
         guard let web3 else { return }
         guard !contracts.keys.contains(name) else { return }
         contracts[name] = web3.eth.Contract(type: GenericERC721Contract.self, address: address)

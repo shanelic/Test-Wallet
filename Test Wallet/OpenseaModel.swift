@@ -15,12 +15,14 @@ struct Opensea {
         let address: String
         let chainIdentifier: String
         let name: String
+        let schemaName: ERC
         let symbol: String
         
         enum CodingKeys: String, CodingKey {
             case address
             case chainIdentifier = "chain_identifier"
             case name
+            case schemaName = "schema_name"
             case symbol
         }
     }
