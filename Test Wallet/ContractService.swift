@@ -8,14 +8,36 @@
 import Foundation
 import Web3ContractABI
 import Web3
+import Moya
+import CombineMoya
+import Combine
 
 class ContractService {
     
     public static var shared = ContractService()
     private init() {}
     
+    private var cancellables = [AnyCancellable]()
+    
     public func setup(rpcUrl: String) {
         self.web3 = Web3(rpcURL: rpcUrl)
+        if let privateKey = try? EthereumPrivateKey(hexPrivateKey: MY_PRIVATE_KEY) {
+            API.shared.request(OpenseaAPIs.retrieveCollections(address: privateKey.address.hex(eip55: true)))
+                .sink { result in
+                    switch result {
+                    case .finished:
+                        print("--- collections from opensea finished")
+                    case .failure(let error):
+                        print("--- error on opensea", error)
+                    }
+                } receiveValue: { collections in
+                    print("--- collections from opensea", collections)
+                }
+                .store(in: &cancellables)
+        } else {
+            print("--- private key init failed.")
+        }
+
     }
     
     private var web3: Web3?

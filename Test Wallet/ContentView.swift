@@ -81,7 +81,10 @@ struct ContentView: View {
         contractMessage = ""
         dynamicContract = nil
         web3 = Web3(rpcURL: "\(rpcUrl):\(rpcPort)")
-        guard let web3 = web3 else {
+        
+        ContractService.shared.setup(rpcUrl: "\(rpcUrl):\(rpcPort)")
+        
+        guard let web3 else {
             contractMessage = "web3 network not connected."
             return
         }
