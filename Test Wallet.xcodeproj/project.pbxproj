@@ -37,8 +37,10 @@
 		30B11B0629CC5C4600A6BBF8 /* WalletConnectVerify in Frameworks */ = {isa = PBXBuildFile; productRef = 30B11B0529CC5C4600A6BBF8 /* WalletConnectVerify */; };
 		30B11B0829CC5C4600A6BBF8 /* Web3Inbox in Frameworks */ = {isa = PBXBuildFile; productRef = 30B11B0729CC5C4600A6BBF8 /* Web3Inbox */; };
 		30B11B0A29CC5C4600A6BBF8 /* Web3Wallet in Frameworks */ = {isa = PBXBuildFile; productRef = 30B11B0929CC5C4600A6BBF8 /* Web3Wallet */; };
+		30C9FD252A0EA5DD00EFB97D /* EtherscanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30C9FD242A0EA5DD00EFB97D /* EtherscanService.swift */; };
 		30C9FD282A0EA67400EFB97D /* CombineMoya in Frameworks */ = {isa = PBXBuildFile; productRef = 30C9FD272A0EA67400EFB97D /* CombineMoya */; };
 		30C9FD2A2A0EA67400EFB97D /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 30C9FD292A0EA67400EFB97D /* Moya */; };
+		30C9FD2C2A0EA86D00EFB97D /* EtherscanModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30C9FD2B2A0EA86D00EFB97D /* EtherscanModel.swift */; };
 		30C9FD322A115E0000EFB97D /* ApiBasics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30C9FD312A115E0000EFB97D /* ApiBasics.swift */; };
 /* End PBXBuildFile section */
 
@@ -81,6 +83,8 @@
 		30B11AF029C9BB0600A6BBF8 /* PomoNetwork.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = PomoNetwork.json; sourceTree = "<group>"; };
 		30B11AF229C9BB9600A6BBF8 /* abi.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = abi.json; sourceTree = "<group>"; };
 		30B11B0B29CD480300A6BBF8 /* Test-Wallet-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Test-Wallet-Info.plist"; sourceTree = SOURCE_ROOT; };
+		30C9FD242A0EA5DD00EFB97D /* EtherscanService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EtherscanService.swift; sourceTree = "<group>"; };
+		30C9FD2B2A0EA86D00EFB97D /* EtherscanModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EtherscanModel.swift; sourceTree = "<group>"; };
 		30C9FD312A115E0000EFB97D /* ApiBasics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiBasics.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -163,6 +167,8 @@
 				30307E1C29E56DC800EC8555 /* WalletConnectService.swift */,
 				3098773F2A0E474F009FD559 /* ContractService.swift */,
 				30C9FD312A115E0000EFB97D /* ApiBasics.swift */,
+				30C9FD242A0EA5DD00EFB97D /* EtherscanService.swift */,
+				30C9FD2B2A0EA86D00EFB97D /* EtherscanModel.swift */,
 				30307E1E29E579F600EC8555 /* QRScannerController.swift */,
 				30307E2029E57AAD00EC8555 /* QRScannerView.swift */,
 			);
@@ -356,10 +362,12 @@
 				30307E1D29E56DC800EC8555 /* WalletConnectService.swift in Sources */,
 				30307E1F29E579F600EC8555 /* QRScannerController.swift in Sources */,
 				30B11AED29C9B1C500A6BBF8 /* ViewModel.swift in Sources */,
+				30C9FD2C2A0EA86D00EFB97D /* EtherscanModel.swift in Sources */,
 				309877402A0E474F009FD559 /* ContractService.swift in Sources */,
 				30307E2129E57AAD00EC8555 /* QRScannerView.swift in Sources */,
 				30C9FD322A115E0000EFB97D /* ApiBasics.swift in Sources */,
 				30B11ABB29C9AE4600A6BBF8 /* Test_WalletApp.swift in Sources */,
+				30C9FD252A0EA5DD00EFB97D /* EtherscanService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
