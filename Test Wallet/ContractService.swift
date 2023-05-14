@@ -57,7 +57,7 @@ class ContractService {
         return method.inputs.reduce(into: [:]) { $0[$1.name] = $1.type }
     }
     
-    public func makeDynamicMethodRequest(name: String, method: String, inputs: [String]) -> SolidityInvocation? {
+    public func makeDynamicMethodRequest(name: String, method: String, inputs: [ABIEncodable]) -> SolidityInvocation? {
         guard
             let contract = contracts[name] as? DynamicContract,
             let method = contract.methods[method] as? BetterInvocation
