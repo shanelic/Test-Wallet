@@ -40,6 +40,10 @@ class ContractService {
         contracts[name] = contract
     }
     
+    public func getContracts() -> [String] {
+        return contracts.keys.sorted()
+    }
+    
     public func getDynamicMethods(name: String) -> [String] {
         guard let contract = contracts[name] as? DynamicContract else {
             return []
