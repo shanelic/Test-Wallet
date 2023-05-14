@@ -41,6 +41,8 @@
 		30C9FD282A0EA67400EFB97D /* CombineMoya in Frameworks */ = {isa = PBXBuildFile; productRef = 30C9FD272A0EA67400EFB97D /* CombineMoya */; };
 		30C9FD2A2A0EA67400EFB97D /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 30C9FD292A0EA67400EFB97D /* Moya */; };
 		30C9FD2C2A0EA86D00EFB97D /* EtherscanModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30C9FD2B2A0EA86D00EFB97D /* EtherscanModel.swift */; };
+		30C9FD2E2A0F7B8100EFB97D /* OpenseaService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30C9FD2D2A0F7B8100EFB97D /* OpenseaService.swift */; };
+		30C9FD302A0F7D0A00EFB97D /* OpenseaModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30C9FD2F2A0F7D0A00EFB97D /* OpenseaModel.swift */; };
 		30C9FD322A115E0000EFB97D /* ApiBasics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30C9FD312A115E0000EFB97D /* ApiBasics.swift */; };
 /* End PBXBuildFile section */
 
@@ -85,6 +87,8 @@
 		30B11B0B29CD480300A6BBF8 /* Test-Wallet-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Test-Wallet-Info.plist"; sourceTree = SOURCE_ROOT; };
 		30C9FD242A0EA5DD00EFB97D /* EtherscanService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EtherscanService.swift; sourceTree = "<group>"; };
 		30C9FD2B2A0EA86D00EFB97D /* EtherscanModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EtherscanModel.swift; sourceTree = "<group>"; };
+		30C9FD2D2A0F7B8100EFB97D /* OpenseaService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenseaService.swift; sourceTree = "<group>"; };
+		30C9FD2F2A0F7D0A00EFB97D /* OpenseaModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenseaModel.swift; sourceTree = "<group>"; };
 		30C9FD312A115E0000EFB97D /* ApiBasics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiBasics.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -169,6 +173,8 @@
 				30C9FD312A115E0000EFB97D /* ApiBasics.swift */,
 				30C9FD242A0EA5DD00EFB97D /* EtherscanService.swift */,
 				30C9FD2B2A0EA86D00EFB97D /* EtherscanModel.swift */,
+				30C9FD2D2A0F7B8100EFB97D /* OpenseaService.swift */,
+				30C9FD2F2A0F7D0A00EFB97D /* OpenseaModel.swift */,
 				30307E1E29E579F600EC8555 /* QRScannerController.swift */,
 				30307E2029E57AAD00EC8555 /* QRScannerView.swift */,
 			);
@@ -361,10 +367,12 @@
 				30B11ABD29C9AE4600A6BBF8 /* ContentView.swift in Sources */,
 				30307E1D29E56DC800EC8555 /* WalletConnectService.swift in Sources */,
 				30307E1F29E579F600EC8555 /* QRScannerController.swift in Sources */,
+				30C9FD302A0F7D0A00EFB97D /* OpenseaModel.swift in Sources */,
 				30B11AED29C9B1C500A6BBF8 /* ViewModel.swift in Sources */,
 				30C9FD2C2A0EA86D00EFB97D /* EtherscanModel.swift in Sources */,
 				309877402A0E474F009FD559 /* ContractService.swift in Sources */,
 				30307E2129E57AAD00EC8555 /* QRScannerView.swift in Sources */,
+				30C9FD2E2A0F7B8100EFB97D /* OpenseaService.swift in Sources */,
 				30C9FD322A115E0000EFB97D /* ApiBasics.swift in Sources */,
 				30B11ABB29C9AE4600A6BBF8 /* Test_WalletApp.swift in Sources */,
 				30C9FD252A0EA5DD00EFB97D /* EtherscanService.swift in Sources */,
