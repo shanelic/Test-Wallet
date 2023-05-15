@@ -21,8 +21,9 @@ class ContractService {
     
     public func setup(rpcUrl: String) {
         self.web3 = Web3(rpcURL: rpcUrl)
-        if let privateKey = try? EthereumPrivateKey(hexPrivateKey: MY_PRIVATE_KEY) {
-            API.shared.request(OpenseaAPIs.retrieveCollections(address: privateKey.address.hex(eip55: true)))
+        
+        if let walletAddress {
+            API.shared.request(OpenseaAPIs.retrieveCollections(address: walletAddress.hex(eip55: true)))
                 .sink { result in
                     switch result {
                     case .finished:
@@ -55,6 +56,10 @@ class ContractService {
     private var web3: Web3?
     private var contracts: [String: EthereumContract] = [:]
     
+    private var walletAddress: EthereumAddress? {
+        try? EthereumPrivateKey(hexPrivateKey: MY_PRIVATE_KEY).address
+    }
+    
     public func add20Contract(name: String, address: EthereumAddress) {
         guard let web3 else { return }
         guard !contracts.keys.contains(name) else { return }
@@ -64,6 +69,7 @@ class ContractService {
     public func add721Contract(name: String, address: EthereumAddress) {
         guard let web3 else { return }
         guard !contracts.keys.contains(name) else { return }
+        guard let walletAddress else { return }
         contracts[name] = web3.eth.Contract(type: GenericERC721Contract.self, address: address)
     }
     
