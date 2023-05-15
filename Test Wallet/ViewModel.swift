@@ -70,6 +70,16 @@ extension Int {
     }
 }
 
+extension String {
+    var safeAbiStringFiltered: String? {
+        let jsonDecoder = JSONDecoder()
+        guard let data = self.data(using: .utf8) else { return nil }
+        guard var elements = try? jsonDecoder.decode(Array<Dictionary<String, AnyCodable>>.self, from: data) else { return nil }
+        let result = elements.filter { ($0["type"]?.value as? String) != "error" }
+        return try? result.json()
+    }
+}
+
 let ABI = """
 {
     "_format": "hh-sol-artifact-1",
