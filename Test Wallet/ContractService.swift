@@ -85,8 +85,21 @@ class ContractService {
     }
 }
 
+// MARK: ERC-721 Cibtract Parsing
+extension ContractService {
+    public func getErc721Contract(_ name: String) -> GenericERC721Contract? {
+        guard contracts.keys.contains(name), let contract = contracts[name] else { return nil }
+        return contract as? GenericERC721Contract
+    }
+}
+
 // MARK: Dynamic Contract Parsing
 extension ContractService {
+    
+    public func getDynamicContract(_ name: String) -> DynamicContract? {
+        guard contracts.keys.contains(name), let contract = contracts[name] else { return nil }
+        return contract as? DynamicContract
+    }
     
     public func getDynamicMethods(name: String) -> [String] {
         guard let contract = contracts[name] as? DynamicContract else {
