@@ -76,8 +76,12 @@ class ContractService {
     public func addDynamicContract(name: String, address: EthereumAddress, abiData: Data, abiKey: String? = nil) {
         guard let web3 else { return }
         guard !contracts.keys.contains(name) else { return }
-        guard let contract = try? web3.eth.Contract(json: abiData, abiKey: abiKey, address: address) else { return }
-        contracts[name] = contract
+        do {
+            let contract = try web3.eth.Contract(json: abiData, abiKey: abiKey, address: address)
+            contracts[name] = contract
+        } catch {
+            print("--- error on adding dynamic contract", error)
+        }
     }
     
     public func getContracts() -> [String] {
