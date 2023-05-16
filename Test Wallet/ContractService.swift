@@ -83,6 +83,10 @@ class ContractService {
     public func getContracts() -> [String] {
         return contracts.keys.sorted()
     }
+}
+
+// MARK: Dynamic Contract Parsing
+extension ContractService {
     
     public func getDynamicMethods(name: String) -> [String] {
         guard let contract = contracts[name] as? DynamicContract else {
@@ -110,17 +114,6 @@ class ContractService {
         }
         return method.betterInvoke(inputs)
     }
-    
-    func test() {
-        if let test = makeDynamicMethodRequest(name: "", method: "", inputs: []) {
-            
-        }
-    }
-}
-
-// MARK: Dynamic Contract Parsing
-extension ContractService {
-    
 }
 
 public protocol BetterInvocation {
