@@ -149,12 +149,12 @@ extension SolidityConstantFunction: BetterInvocation {
 
 extension SolidityNonPayableFunction: BetterInvocation {
     public func betterInvoke(_ inputs: [ABIEncodable]) -> SolidityInvocation {
-        return SolidityReadInvocation(method: self, parameters: inputs, handler: handler)
+        return SolidityNonPayableInvocation(method: self, parameters: inputs, handler: handler)
     }
 }
 
 extension SolidityPayableFunction: BetterInvocation {
     public func betterInvoke(_ inputs: [ABIEncodable]) -> SolidityInvocation {
-        return SolidityReadInvocation(method: self, parameters: inputs, handler: handler)
+        return SolidityPayableInvocation(method: self, parameters: inputs, handler: handler)
     }
 }
