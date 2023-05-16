@@ -105,4 +105,25 @@ extension EtherscanAPIs {
             self.offset = "\(offset)"
         }
     }
+    
+    struct AbiFromContract: EtherscanTargetType {
+        typealias ResponseType = EtherscanResponse<String>
+        var method: Moya.Method { .get }
+        var path: String { "/" }
+        var task: Task { .requestParameters(
+            parameters: [
+                "module": "contract",
+                "action": "getabi",
+                "address": address,
+                "apikey": apiKey,
+            ],
+            encoding: URLEncoding.queryString
+        ) }
+        
+        private var address: String
+        
+        init(address: String) {
+            self.address = address
+        }
+    }
 }
