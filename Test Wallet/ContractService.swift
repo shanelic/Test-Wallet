@@ -12,7 +12,8 @@ import Moya
 import CombineMoya
 import Combine
 
-class ContractService {
+@globalActor
+actor ContractService {
     
     public static var shared = ContractService()
     private init() {}
