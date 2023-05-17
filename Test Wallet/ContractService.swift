@@ -86,6 +86,11 @@ actor ContractService {
         myPrint("\(contracts.count) contracts added", contracts.keys.sorted())
     }
     
+    public func removeContract(_ name: String) {
+        guard let index = contracts.keys.firstIndex(of: name) else { return }
+        _ = contracts.remove(at: index)
+    }
+    
     public func removeAllContracts() {
         contracts = [:]
     }
