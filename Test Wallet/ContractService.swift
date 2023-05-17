@@ -89,7 +89,7 @@ class ContractService {
     }
 }
 
-// MARK: ERC-721 Cibtract Parsing
+// MARK: ERC-721 Contract Parsing
 extension ContractService {
     public func getErc721Contract(_ name: String) -> GenericERC721Contract? {
         guard contracts.keys.contains(name), let contract = contracts[name] else { return nil }

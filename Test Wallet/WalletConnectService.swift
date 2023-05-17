@@ -58,7 +58,7 @@ class WalletConnectService {
             .sink { proposal in
                 myPrint("[web3wallet] session proposal below:", proposal)
                 if let myPrivateKey = try? EthereumPrivateKey(hexPrivateKey: MY_PRIVATE_KEY),
-                   let account = Account(chainIdentifier: Chain.Ethereum_Goerli.eip155, address: myPrivateKey.address.hex(eip55: true))
+                   let account = Account(chainIdentifier: Network.EthereumGoerli.eip155, address: myPrivateKey.address.hex(eip55: true))
                 {
                     Task.detached { [unowned self] in
                         await approveProposal(proposal, by: account)
@@ -94,8 +94,8 @@ class WalletConnectService {
     
     func approveProposal(_ proposal: Session.Proposal, by account: Account) async {
         do {
-            let pomo = Chain.PomoChain.blockchain
-            let goerli = Chain.Ethereum_Goerli.blockchain
+            let pomo = Network.PomoTestnet.blockchain
+            let goerli = Network.EthereumGoerli.blockchain
             guard let requiredEip155 = proposal.requiredNamespaces["eip155"] else {
                 myPrint("[web3wallet] approving proposal: required eip-155 initializing failed.")
                 return
@@ -234,7 +234,7 @@ class WalletConnectService {
             to: try EthereumAddress(ethereumValue: to),
             value: value,
             data: data
-        ).sign(with: privateKey, chainId: Chain.Ethereum_Goerli.chainId.ethQty)
+        ).sign(with: privateKey, chainId: Network.EthereumGoerli.chainId.ethQty)
         
         return signedTx.r.hex() + String(signedTx.s.quantity, radix: 16) + String(signedTx.v.quantity, radix: 16)
     }

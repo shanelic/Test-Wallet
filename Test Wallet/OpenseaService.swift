@@ -67,5 +67,3 @@ extension OpenseaAPIs {
     }
     
 }
-
-// "https://api.opensea.io/api/v1/collections?asset_owner=0x44d2B9e1f347711066Aa4db55321911794C39B57&offset=0&limit=300"
