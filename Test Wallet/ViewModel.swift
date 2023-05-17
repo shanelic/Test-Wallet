@@ -8,6 +8,7 @@
 import Foundation
 import Web3
 import Web3Wallet
+import Web3ContractABI
 
 class ViewModel: ObservableObject {
     
@@ -45,6 +46,21 @@ class ViewModel: ObservableObject {
         }
     }
     @Published private var _selectedContract: EthereumContract? = nil
+    
+    var constantMethodsInContract: [String: SolidityFunction] {
+        if let _ = _selectedContract as? GenericERC721Contract {
+            myPrint("selected contract did set as erc721")
+            // TODO: give the erc721 standard methods
+            return [:]
+        } else if let contract = _selectedContract as? DynamicContract {
+            let constants = contract.methods.filter { ($0.value as? BetterInvocation)?.type == .constant }
+            myPrint("selected contract did set as dynamic, from \(contract.methods.count) to \(constants.count)")
+            return constants
+        } else {
+            myPrint("selected contract did set as others")
+            return [:]
+        }
+    }
     
     var walletAddress: EthereumAddress? {
         try? EthereumPrivateKey(hexPrivateKey: MY_PRIVATE_KEY).address
