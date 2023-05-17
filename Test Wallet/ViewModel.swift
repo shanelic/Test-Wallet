@@ -11,6 +11,12 @@ import Web3Wallet
 
 class ViewModel: ObservableObject {
     
+    @Published var networks: [Network] = [
+        .EthereumMainnet,
+        .EthereumGoerli,
+        .PolygonMainnet,
+        .PomoTestnet,
+    ]
     @Published var selectedNetworkIndex: Int = 0 {
         didSet {
             myPrint("Network will change to \(selectedNetwork.name)")
@@ -18,19 +24,26 @@ class ViewModel: ObservableObject {
         }
     }
     
-    @Published var networks: [Network] = [
-        .EthereumMainnet,
-        .EthereumGoerli,
-        .PolygonMainnet,
-        .PomoTestnet,
-    ]
-    
     var selectedNetwork: Network {
         networks[selectedNetworkIndex]
     }
     
-    @Published var collections: [Opensea.Collection] = [] {
+    private var collections: [Opensea.Collection] = [] {
         didSet {
+        }
+    }
+    
+    var walletAddress: EthereumAddress? {
+        try? EthereumPrivateKey(hexPrivateKey: MY_PRIVATE_KEY).address
+    }
+    
+    @Published private var _balance: EthereumQuantity = 0
+    public var balance: Double {
+        let stringValue = "\(_balance.quantity)"
+        if stringValue.count > 13 {
+            return ((Double(stringValue.dropLast(11)) ?? 0.0) / 10).rounded() / 1_000_000
+        } else {
+            return 0.0
         }
     }
     
@@ -44,8 +57,10 @@ class ViewModel: ObservableObject {
                 guard let rpcServer = network.rpcServers.first else { return }
                 try await switchNetwork(rpcServer)
                 guard let walletAddress else { return }
+                let balance = try await reloadBalance(of: walletAddress)
                 let collections = try await reloadHoldings(of: walletAddress)
                 await MainActor.run {
+                    self._balance = balance
                     self.collections = collections
                 }
             } catch {
@@ -56,6 +71,10 @@ class ViewModel: ObservableObject {
     
     private func switchNetwork(_ rpcServer: Network.RpcServer) async throws {
         try await ContractService.shared.switchNetwork(rpcUrl: rpcServer.url)
+    }
+    
+    private func reloadBalance(of address: EthereumAddress) async throws -> EthereumQuantity {
+        return try await ContractService.shared.getBalance(of: address)
     }
     
     private func reloadHoldings(of address: EthereumAddress) async throws -> [Opensea.Collection] {
@@ -77,6 +96,7 @@ struct Network {
     let chainId: Int
     let rpcServers: [RpcServer]
     let multicall3: String
+    let chainIdentity: Opensea.ChainIdentity
     
     var eip155: String {
         "eip155:\(chainId)"

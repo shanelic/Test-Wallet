@@ -51,6 +51,13 @@ actor ContractService {
         }
     }
     
+    public func getBalance(of address: EthereumAddress) async throws -> EthereumQuantity {
+        guard let web3 else {
+            throw TestWalletError.general("web3 not initialized")
+        }
+        return try await web3.eth.getBalance(address: address, block: .latest).async()
+    }
+    
     private func isAddressContract(_ address: EthereumAddress) async -> Bool {
         guard let web3 else {
             myPrint("web3 is not initialized")
