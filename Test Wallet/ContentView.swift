@@ -66,6 +66,46 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 8) {
+                HStack {
+                    Text("Select Network").bold()
+                    Spacer()
+                    Picker("", selection: $viewModel.selectedNetworkIndex) {
+                        ForEach(0 ..< viewModel.networks.count, id: \.self) { option in
+                            Text(viewModel.networks[option].name)
+                        }
+                    }
+                }
+                HStack {
+                    Text("RPC Server").bold()
+                    Spacer()
+                    Text(viewModel.selectedNetwork.rpcServers.first!.url)
+                }
+                HStack {
+                    Text("Native Token Holding").bold()
+                    Spacer()
+                    Text("\(viewModel.balance)")
+                }
+                if !$viewModel.contracts.isEmpty {
+                    HStack {
+                        Text("Select Contract").bold()
+                        Spacer()
+                        Picker("", selection: $viewModel.selectedContractIndex) {
+                            ForEach(0 ..< viewModel.contracts.count, id: \.self) { option in
+                                Text("\(viewModel.contracts[option].name)")
+                            }
+                        }
+                    }
+                }
+                if !viewModel.constantMethodsInContract.isEmpty {
+                    List {
+                        ForEach(viewModel.constantMethodsInContract.sorted(by: { $0.key < $1.key }), id: \.key) { key, value in
+                            Button(key) {
+                                myPrint(value)
+                            }
+                        }
+                    }
+                    .listStyle(.plain)
+                }
             }
             .padding()
             .onChange(of: scannedWalletConnect) { newValue in
