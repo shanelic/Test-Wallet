@@ -33,6 +33,7 @@ class ViewModel: ObservableObject {
         }
     }
     
+    @Published var contracts: [Opensea.AssetContract] = []
     var walletAddress: EthereumAddress? {
         try? EthereumPrivateKey(hexPrivateKey: MY_PRIVATE_KEY).address
     }
@@ -63,6 +64,7 @@ class ViewModel: ObservableObject {
                 await MainActor.run {
                     self._balance = balance
                     self.collections = collections
+                    self.contracts = collections.reduce([], { $0 + $1.validAssetContracts })
                 }
             } catch {
                 errorHandler(error)
