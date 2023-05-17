@@ -9,6 +9,51 @@ import Foundation
 import Web3
 import Web3Wallet
 
+class ViewModel: ObservableObject {
+    
+    @Published var selectedNetworkIndex: Int = 0 {
+        didSet {
+            initialNetwork(selectedNetwork)
+        }
+    }
+    
+    @Published var networks: [Network] = [
+        .EthereumMainnet,
+        .EthereumGoerli,
+        .PolygonMainnet,
+        .PomoTestnet,
+    ]
+    
+    var selectedNetwork: Network {
+        networks[selectedNetworkIndex]
+    }
+    
+    init() {
+        initialNetwork(selectedNetwork)
+    }
+    
+    private func initialNetwork(_ network: Network) {
+        Task {
+            myPrint("network just changed to \(network.name)")
+            guard let rpcServer = network.rpcServers.first else { return }
+            await switchNetwork(rpcServer)
+        }
+    }
+    
+    private func switchNetwork(_ rpcServer: Network.RpcServer) async {
+        do {
+            try await ContractService.shared.switchNetwork(rpcUrl: rpcServer.url)
+        } catch {
+            errorHandler(error)
+        }
+    }
+    
+    private func errorHandler(_ error: Error) {
+        myPrint(error)
+    }
+    
+}
+
 struct Network {
     let name: String
     let chainId: Int
@@ -50,9 +95,6 @@ func myPrint(_ items: Any...) {
     print(":::", items)
 }
 
-let RPC_URL  = "https://dev-ganache.pomo.network/"
-let RPC_PORT = "9527"
-
 let CONTRACT_ADDRESS = "0x09430eF1032bBB52c4F60BC00Bb0AaC1dfEd3972"
 
 let MY_PRIVATE_KEY = "0x7742f00f27407887563707673c4c0afaab1c87fbe6cabf5547aeb58fe2260cdd"
@@ -93,7 +135,7 @@ extension String {
     var safeAbiStringFiltered: String? {
         let jsonDecoder = JSONDecoder()
         guard let data = self.data(using: .utf8) else { return nil }
-        guard var elements = try? jsonDecoder.decode(Array<Dictionary<String, AnyCodable>>.self, from: data) else { return nil }
+        guard let elements = try? jsonDecoder.decode(Array<Dictionary<String, AnyCodable>>.self, from: data) else { return nil }
         let result = elements.filter { ($0["type"]?.value as? String) != "error" }
         return try? result.json()
     }

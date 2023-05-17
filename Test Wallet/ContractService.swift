@@ -8,8 +8,6 @@
 import Foundation
 import Web3ContractABI
 import Web3
-import Moya
-import CombineMoya
 import Combine
 
 @globalActor
@@ -20,45 +18,19 @@ actor ContractService {
     
     private var cancellables = [AnyCancellable]()
     
-    public func setup(rpcUrl: String) {
-        self.web3 = Web3(rpcURL: rpcUrl)
-        
-        if let walletAddress {
-            API.shared.request(OpenseaAPIs.retrieveCollections(address: walletAddress.hex(eip55: true)))
-                .sink { result in
-                    switch result {
-                    case .finished:
-                        print("--- collections from opensea finished")
-                    case .failure(let error):
-                        print("--- error on opensea", error)
-                    }
-                } receiveValue: { collections in
-                    print("--- collections from opensea", collections)
-                    for collection in collections {
-                        for contract in collection.primaryAssetContracts {
-                            switch contract.schemaName {
-                            case .ERC721:
-                                guard let contractAddress = EthereumAddress(hexString: contract.address) else { continue }
-                                self.add721Contract(name: "\(contract.name)-\(contract.address)", address: contractAddress)
-                                print("--- contracts saved", self.getContracts())
-                            default:
-                                break
-                            }
-                        }
-                    }
-                }
-                .store(in: &cancellables)
-        } else {
-            print("--- private key init failed.")
-        }
-
-    }
-    
     private var web3: Web3?
     private var contracts: [String: EthereumContract] = [:]
     
-    private var walletAddress: EthereumAddress? {
-        try? EthereumPrivateKey(hexPrivateKey: MY_PRIVATE_KEY).address
+    public func switchNetwork(rpcUrl: String) async throws {
+        let temp = Web3(rpcURL: rpcUrl)
+        do {
+            let version = try await temp.clientVersion().async()
+            myPrint("switch network to rpc server: \(version)")
+        } catch {
+            myPrint("error on switch network", error)
+            throw error
+        }
+        self.web3 = temp
     }
     
     public func add20Contract(name: String, address: EthereumAddress) {
