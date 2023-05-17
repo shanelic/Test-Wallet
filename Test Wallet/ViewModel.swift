@@ -13,6 +13,7 @@ class ViewModel: ObservableObject {
     
     @Published var selectedNetworkIndex: Int = 0 {
         didSet {
+            myPrint("Network will change to \(selectedNetwork.name)")
             initialNetwork(selectedNetwork)
         }
     }
@@ -39,35 +40,30 @@ class ViewModel: ObservableObject {
     
     private func initialNetwork(_ network: Network) {
         Task {
-            myPrint("network just changed to \(network.name)")
-            guard let rpcServer = network.rpcServers.first else { return }
-            await switchNetwork(rpcServer)
-            guard let walletAddress else { return }
-            await reloadHoldings(of: walletAddress)
+            do {
+                guard let rpcServer = network.rpcServers.first else { return }
+                try await switchNetwork(rpcServer)
+                guard let walletAddress else { return }
+                let collections = try await reloadHoldings(of: walletAddress)
+                await MainActor.run {
+                    self.collections = collections
+                }
+            } catch {
+                errorHandler(error)
+            }
         }
     }
     
-    private func switchNetwork(_ rpcServer: Network.RpcServer) async {
-        do {
-            try await ContractService.shared.switchNetwork(rpcUrl: rpcServer.url)
-        } catch {
-            errorHandler(error)
-        }
+    private func switchNetwork(_ rpcServer: Network.RpcServer) async throws {
+        try await ContractService.shared.switchNetwork(rpcUrl: rpcServer.url)
     }
     
-    private func reloadHoldings(of address: EthereumAddress) async {
-        do {
-            var tempCollections = try await ContractService.shared.reloadHoldings(for: address)
-            for index in 0 ..< tempCollections.count {
-                tempCollections[index].appliedChain = selectedNetwork.chainIdentity
-            }
-            let collections = tempCollections
-            await MainActor.run {
-                self.collections = collections
-            }
-        } catch {
-            errorHandler(error)
+    private func reloadHoldings(of address: EthereumAddress) async throws -> [Opensea.Collection] {
+        var collections = try await ContractService.shared.reloadHoldings(for: address)
+        for index in 0 ..< collections.count {
+            collections[index].appliedChain = selectedNetwork.chainIdentity
         }
+        return collections
     }
     
     private func errorHandler(_ error: Error) {
