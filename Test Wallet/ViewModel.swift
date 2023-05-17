@@ -34,6 +34,18 @@ class ViewModel: ObservableObject {
     }
     
     @Published var contracts: [Opensea.AssetContract] = []
+    @Published var selectedContractIndex: Int = 0 {
+        didSet {
+            Task {
+                let contract = await reloadContract(selectedContractIndex)
+                await MainActor.run {
+                    _selectedContract = contract
+                }
+            }
+        }
+    }
+    @Published private var _selectedContract: EthereumContract? = nil
+    
     var walletAddress: EthereumAddress? {
         try? EthereumPrivateKey(hexPrivateKey: MY_PRIVATE_KEY).address
     }
@@ -65,6 +77,7 @@ class ViewModel: ObservableObject {
                     self._balance = balance
                     self.collections = collections
                     self.contracts = collections.reduce([], { $0 + $1.validAssetContracts })
+                    self.selectedContractIndex = { selectedContractIndex }()
                 }
             } catch {
                 errorHandler(error)
@@ -91,6 +104,22 @@ class ViewModel: ObservableObject {
     private func reloadCollectionContracts(_ collections: [Opensea.Collection]) async throws {
         await ContractService.shared.removeAllContracts()
         try await ContractService.shared.addContracts(collections)
+    }
+    
+    private func reloadContract(_ selectedContractIndex: Int) async -> EthereumContract? {
+        guard selectedContractIndex + 1 <= contracts.count else {
+            return nil
+        }
+        let openseaContract = contracts[selectedContractIndex]
+        let contracts = await ContractService.shared.getContracts()
+        if contracts.contains("\(openseaContract.name) - \(openseaContract.address)") {
+            switch openseaContract.schemaName {
+            default:
+                return await ContractService.shared.getDynamicContract("\(openseaContract.name) - \(openseaContract.address)")
+            }
+        } else {
+            return nil
+        }
     }
     
     private func errorHandler(_ error: Error) {
