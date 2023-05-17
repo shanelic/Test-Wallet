@@ -64,17 +64,19 @@ struct ContentView: View {
     @StateObject var viewModel = ViewModel()
     
     var body: some View {
-        VStack(spacing: 20) {
-        }
-        .padding()
-        .onChange(of: scannedWalletConnect) { newValue in
-            guard !newValue.isEmpty else {
-                return
+        NavigationView {
+            VStack(spacing: 8) {
             }
-            Task.detached {
-                await service.connectWallet(url: newValue)
+            .padding()
+            .onChange(of: scannedWalletConnect) { newValue in
+                guard !newValue.isEmpty else {
+                    return
+                }
+                Task.detached {
+                    await service.connectWallet(url: newValue)
+                }
+                scannedWalletConnect = ""
             }
-            scannedWalletConnect = ""
         }
         .sheet(isPresented: $showScanner) {
             QRScannerView(scanResult: $scannedWalletConnect, shown: $showScanner)

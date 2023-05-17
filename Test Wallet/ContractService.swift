@@ -33,27 +33,43 @@ actor ContractService {
         self.web3 = temp
     }
     
-    public func add20Contract(name: String, address: EthereumAddress) {
-        guard let web3 else { return }
-        guard !contracts.keys.contains(name) else { return }
-        contracts[name] = web3.eth.Contract(type: GenericERC20Contract.self, address: address)
+    private func isAddressContract(_ address: EthereumAddress) async -> Bool {
+        guard let web3 else {
+            myPrint("web3 is not initialized")
+            return false
+        }
+        if let code = try? await web3.eth.getCode(address: address, block: .latest).async() {
+            return code.hex() != "0x"
+        }
+        return false
     }
     
-    public func add721Contract(name: String, address: EthereumAddress) {
+    public func add20Contract(name: String, address: EthereumAddress) async {
         guard let web3 else { return }
         guard !contracts.keys.contains(name) else { return }
-        guard let walletAddress else { return }
-        contracts[name] = web3.eth.Contract(type: GenericERC721Contract.self, address: address)
+        if await isAddressContract(address) {
+            contracts[name] = web3.eth.Contract(type: GenericERC20Contract.self, address: address)
+        }
     }
     
-    public func addDynamicContract(name: String, address: EthereumAddress, abiData: Data, abiKey: String? = nil) {
+    public func add721Contract(name: String, address: EthereumAddress) async {
         guard let web3 else { return }
         guard !contracts.keys.contains(name) else { return }
-        do {
-            let contract = try web3.eth.Contract(json: abiData, abiKey: abiKey, address: address)
-            contracts[name] = contract
-        } catch {
-            print("--- error on adding dynamic contract", error)
+        if await isAddressContract(address) {
+            contracts[name] = web3.eth.Contract(type: GenericERC721Contract.self, address: address)
+        }
+    }
+    
+    public func addDynamicContract(name: String, address: EthereumAddress, abiData: Data, abiKey: String? = nil) async {
+        guard let web3 else { return }
+        guard !contracts.keys.contains(name) else { return }
+        if await isAddressContract(address) {
+            do {
+                let contract = try web3.eth.Contract(json: abiData, abiKey: abiKey, address: address)
+                contracts[name] = contract
+            } catch {
+                print("--- error on adding dynamic contract", error)
+            }
         }
     }
     
