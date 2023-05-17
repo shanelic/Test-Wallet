@@ -28,6 +28,11 @@ class ViewModel: ObservableObject {
         networks[selectedNetworkIndex]
     }
     
+    @Published var collections: [Opensea.Collection] = [] {
+        didSet {
+        }
+    }
+    
     init() {
         initialNetwork(selectedNetwork)
     }
@@ -37,12 +42,29 @@ class ViewModel: ObservableObject {
             myPrint("network just changed to \(network.name)")
             guard let rpcServer = network.rpcServers.first else { return }
             await switchNetwork(rpcServer)
+            guard let walletAddress else { return }
+            await reloadHoldings(of: walletAddress)
         }
     }
     
     private func switchNetwork(_ rpcServer: Network.RpcServer) async {
         do {
             try await ContractService.shared.switchNetwork(rpcUrl: rpcServer.url)
+        } catch {
+            errorHandler(error)
+        }
+    }
+    
+    private func reloadHoldings(of address: EthereumAddress) async {
+        do {
+            var tempCollections = try await ContractService.shared.reloadHoldings(for: address)
+            for index in 0 ..< tempCollections.count {
+                tempCollections[index].appliedChain = selectedNetwork.chainIdentity
+            }
+            let collections = tempCollections
+            await MainActor.run {
+                self.collections = collections
+            }
         } catch {
             errorHandler(error)
         }

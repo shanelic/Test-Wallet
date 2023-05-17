@@ -33,6 +33,24 @@ actor ContractService {
         self.web3 = temp
     }
     
+    /// this function will reload holdings from opensea and return their contracts
+    public func reloadHoldings(for address: EthereumAddress) async throws -> [Opensea.Collection] {
+        return try await withCheckedThrowingContinuation { continuation in
+            API.shared.request(OpenseaAPIs.retrieveCollections(address: address.hex(eip55: true)))
+                .sink { result in
+                    switch result {
+                    case .failure(let error):
+                        continuation.resume(throwing: error)
+                    case .finished:
+                        print("--- reload holdings finished with continuation")
+                    }
+                } receiveValue: { collections in
+                    continuation.resume(returning: collections)
+                }
+                .store(in: &self.cancellables)
+        }
+    }
+    
     private func isAddressContract(_ address: EthereumAddress) async -> Bool {
         guard let web3 else {
             myPrint("web3 is not initialized")
