@@ -29,10 +29,7 @@ class ViewModel: ObservableObject {
         networks[selectedNetworkIndex]
     }
     
-    private var collections: [Opensea.Collection] = [] {
-        didSet {
-        }
-    }
+    private var collections: [Opensea.Collection] = []
     
     @Published var contracts: [Opensea.AssetContract] = []
     @Published var selectedContractIndex: Int = 0 {
@@ -49,15 +46,12 @@ class ViewModel: ObservableObject {
     
     var constantMethodsInContract: [String: SolidityFunction] {
         if let _ = _selectedContract as? GenericERC721Contract {
-            myPrint("selected contract did set as erc721")
             // TODO: give the erc721 standard methods
             return [:]
         } else if let contract = _selectedContract as? DynamicContract {
             let constants = contract.methods.filter { ($0.value as? BetterInvocation)?.type == .constant }
-            myPrint("selected contract did set as dynamic, from \(contract.methods.count) to \(constants.count)")
             return constants
         } else {
-            myPrint("selected contract did set as others")
             return [:]
         }
     }
