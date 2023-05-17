@@ -11,6 +11,7 @@
 		30307E1D29E56DC800EC8555 /* WalletConnectService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30307E1C29E56DC800EC8555 /* WalletConnectService.swift */; };
 		30307E1F29E579F600EC8555 /* QRScannerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30307E1E29E579F600EC8555 /* QRScannerController.swift */; };
 		30307E2129E57AAD00EC8555 /* QRScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30307E2029E57AAD00EC8555 /* QRScannerView.swift */; };
+		3065EF002A1534EA00A5BAFD /* MethodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3065EEFF2A1534EA00A5BAFD /* MethodView.swift */; };
 		3098773E2A0E4266009FD559 /* 1155abi.json in Resources */ = {isa = PBXBuildFile; fileRef = 3098773D2A0E4266009FD559 /* 1155abi.json */; };
 		309877402A0E474F009FD559 /* ContractService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3098773F2A0E474F009FD559 /* ContractService.swift */; };
 		30B11ABB29C9AE4600A6BBF8 /* Test_WalletApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B11ABA29C9AE4600A6BBF8 /* Test_WalletApp.swift */; };
@@ -68,6 +69,7 @@
 		30307E1E29E579F600EC8555 /* QRScannerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScannerController.swift; sourceTree = "<group>"; };
 		30307E2029E57AAD00EC8555 /* QRScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScannerView.swift; sourceTree = "<group>"; };
 		30307E2229E57B2800EC8555 /* Test WalletDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Test WalletDebug.entitlements"; sourceTree = "<group>"; };
+		3065EEFF2A1534EA00A5BAFD /* MethodView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MethodView.swift; sourceTree = "<group>"; };
 		3098773D2A0E4266009FD559 /* 1155abi.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = 1155abi.json; sourceTree = "<group>"; };
 		3098773F2A0E474F009FD559 /* ContractService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContractService.swift; sourceTree = "<group>"; };
 		30B11AB729C9AE4600A6BBF8 /* Test Wallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Test Wallet.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -175,6 +177,7 @@
 				30C9FD2B2A0EA86D00EFB97D /* EtherscanModel.swift */,
 				30C9FD2D2A0F7B8100EFB97D /* OpenseaService.swift */,
 				30C9FD2F2A0F7D0A00EFB97D /* OpenseaModel.swift */,
+				3065EEFF2A1534EA00A5BAFD /* MethodView.swift */,
 				30307E1E29E579F600EC8555 /* QRScannerController.swift */,
 				30307E2029E57AAD00EC8555 /* QRScannerView.swift */,
 			);
@@ -370,6 +373,7 @@
 				30C9FD302A0F7D0A00EFB97D /* OpenseaModel.swift in Sources */,
 				30B11AED29C9B1C500A6BBF8 /* ViewModel.swift in Sources */,
 				30C9FD2C2A0EA86D00EFB97D /* EtherscanModel.swift in Sources */,
+				3065EF002A1534EA00A5BAFD /* MethodView.swift in Sources */,
 				309877402A0E474F009FD559 /* ContractService.swift in Sources */,
 				30307E2129E57AAD00EC8555 /* QRScannerView.swift in Sources */,
 				30C9FD2E2A0F7B8100EFB97D /* OpenseaService.swift in Sources */,

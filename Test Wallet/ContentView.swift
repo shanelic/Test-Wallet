@@ -29,6 +29,8 @@ struct ContentView: View {
     @State private var showScanner = false
     @State private var scannedWalletConnect = ""
     
+    @State private var showMethodSheet = false
+    
     var service = WalletConnectService()
     
     func reset() {
@@ -101,6 +103,7 @@ struct ContentView: View {
                         ForEach(viewModel.constantMethodsInContract.sorted(by: { $0.key < $1.key }), id: \.key) { key, value in
                             Button(key) {
                                 myPrint(value)
+                                showMethodSheet = true
                             }
                         }
                     }
@@ -117,6 +120,10 @@ struct ContentView: View {
                 }
                 scannedWalletConnect = ""
             }
+        }
+        .sheet(isPresented: $showMethodSheet, onDismiss: {
+            viewModel.selectedMethod = nil
+        }) {
         }
         .sheet(isPresented: $showScanner) {
             QRScannerView(scanResult: $scannedWalletConnect, shown: $showScanner)
