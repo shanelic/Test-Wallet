@@ -59,6 +59,7 @@ class ViewModel: ObservableObject {
                 guard let walletAddress else { return }
                 let balance = try await reloadBalance(of: walletAddress)
                 let collections = try await reloadHoldings(of: walletAddress)
+                try await reloadCollectionContracts(collections)
                 await MainActor.run {
                     self._balance = balance
                     self.collections = collections
@@ -83,6 +84,11 @@ class ViewModel: ObservableObject {
             collections[index].appliedChain = selectedNetwork.chainIdentity
         }
         return collections
+    }
+    
+    private func reloadCollectionContracts(_ collections: [Opensea.Collection]) async throws {
+        await ContractService.shared.removeAllContracts()
+        try await ContractService.shared.addContracts(collections)
     }
     
     private func errorHandler(_ error: Error) {
