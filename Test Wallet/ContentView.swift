@@ -102,7 +102,7 @@ struct ContentView: View {
                     List {
                         ForEach(viewModel.constantMethodsInContract.sorted(by: { $0.key < $1.key }), id: \.key) { key, value in
                             Button(key) {
-                                myPrint(value)
+                                viewModel.selectedMethod = (key, value)
                                 showMethodSheet = true
                             }
                         }
@@ -124,6 +124,8 @@ struct ContentView: View {
         .sheet(isPresented: $showMethodSheet, onDismiss: {
             viewModel.selectedMethod = nil
         }) {
+            MethodView(viewModel.selectedMethod!, wallet: viewModel.walletAddress)
+                .presentationDetents([.medium])
         }
         .sheet(isPresented: $showScanner) {
             QRScannerView(scanResult: $scannedWalletConnect, shown: $showScanner)

@@ -56,6 +56,8 @@ class ViewModel: ObservableObject {
         }
     }
     
+    @Published var selectedMethod: (String, SolidityFunction)? = nil
+    
     var walletAddress: EthereumAddress? {
         try? EthereumPrivateKey(hexPrivateKey: MY_PRIVATE_KEY).address
     }
