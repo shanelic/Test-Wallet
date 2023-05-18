@@ -44,25 +44,29 @@ struct ContentView: View {
         }
     }
     
-    private func errorHandler(_ error: Error) -> String {
+    @State var alert: Bool = false
+    @State var alertBody: String = ""
+    
+    private func errorHandler(_ error: Error) {
         myPrint(error)
         if case .general(let reason) = error as? TestWalletError {
-            return reason
+            alertBody = reason
         } else if let error = error as? RPCResponse<EthereumQuantity>.Error {
-            return error.message
+            alertBody = error.message
         } else if let error = error as? RPCResponse<EthereumData>.Error {
-            return error.message
+            alertBody = error.message
         } else if case .invalidInvocation = error as? InvocationError {
-            return (error as! InvocationError).localizedDescription + " invalid invocation"
+            alertBody = (error as! InvocationError).localizedDescription + " invalid invocation"
         } else if case .contractNotDeployed = error as? InvocationError {
-            return (error as! InvocationError).localizedDescription + " contract not deployed"
+            alertBody = (error as! InvocationError).localizedDescription + " contract not deployed"
         } else if case .encodingError = error as? InvocationError {
-            return (error as! InvocationError).localizedDescription + " encoding error"
+            alertBody = (error as! InvocationError).localizedDescription + " encoding error"
         } else if case .invalidConfiguration = error as? InvocationError {
-            return (error as! InvocationError).localizedDescription + " invalid configuration"
+            alertBody = (error as! InvocationError).localizedDescription + " invalid configuration"
         } else {
-            return error.localizedDescription
+            alertBody = error.localizedDescription
         }
+        alert = true
     }
     
     @StateObject var viewModel = ViewModel()
@@ -79,6 +83,7 @@ struct ContentView: View {
                     do {
                         try viewModel.importWallet(privateKey: privateKey)
                     } catch {
+                       errorHandler(error)
                     }
                 }
                 HStack {
@@ -152,6 +157,18 @@ struct ContentView: View {
         .sheet(isPresented: $showScanner) {
             QRScannerView(scanResult: $scannedWalletConnect, shown: $showScanner)
                 .presentationDetents([.medium])
+        }
+        .alert(isPresented: $alert) {
+            Alert(
+                title: Text("Error"),
+                message: Text(alertBody),
+                dismissButton: Alert.Button.default(
+                    Text("Okay"),
+                    action: {
+                        self.alertBody = ""
+                    }
+                )
+            )
         }
     }
 }
