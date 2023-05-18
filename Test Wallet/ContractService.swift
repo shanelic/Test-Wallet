@@ -34,7 +34,7 @@ actor ContractService {
     }
     
     /// this function will reload holdings from opensea and return their contracts
-    public func reloadHoldings(for address: EthereumAddress) async throws -> [Opensea.Collection] {
+    public func retrieveCollections(for address: EthereumAddress) async throws -> [Opensea.Collection] {
         return try await withCheckedThrowingContinuation { continuation in
             API.shared.request(OpenseaAPIs.retrieveCollections(address: address.hex(eip55: true)))
                 .sink { result in

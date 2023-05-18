@@ -104,7 +104,7 @@ class ViewModel: ObservableObject {
                 try await switchNetwork(rpcServer)
                 guard let walletAddress else { return }
                 let balance = try await reloadBalance(of: walletAddress)
-                let collections = try await reloadHoldings(of: walletAddress)
+                let collections = try await retrieveCollections(of: walletAddress)
                 try await reloadCollectionContracts(collections)
                 await MainActor.run {
                     self._balance = balance
@@ -126,8 +126,8 @@ class ViewModel: ObservableObject {
         return try await ContractService.shared.getBalance(of: address)
     }
     
-    private func reloadHoldings(of address: EthereumAddress) async throws -> [Opensea.Collection] {
-        var collections = try await ContractService.shared.reloadHoldings(for: address)
+    private func retrieveCollections(of address: EthereumAddress) async throws -> [Opensea.Collection] {
+        var collections = try await ContractService.shared.retrieveCollections(for: address)
         for index in 0 ..< collections.count {
             collections[index].appliedChain = selectedNetwork.chainIdentity
         }
