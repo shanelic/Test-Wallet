@@ -73,11 +73,20 @@ struct MethodView: View {
         }
         .padding()
         .onAppear {
-            if let address = wallet?.hex(eip55: true) {
-                for index in 0 ..< method.inputs.count {
-                    if method.inputs[index].type == .address {
+            for index in 0 ..< method.inputs.count {
+                switch method.inputs[index].type {
+                case .type(.address):
+                    if let address = wallet?.hex(eip55: true) {
                         inputs[index] = address
                     }
+                case .type(.uint), .type(.int):
+                    inputs[index] = "0"
+                case .type(.bool):
+                    inputs[index] = "True"
+                case .type(.bytes):
+                    inputs[index] = "0x000000000000000000000000000000"
+                default:
+                    break
                 }
             }
         }
