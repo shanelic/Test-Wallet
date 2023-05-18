@@ -8,6 +8,7 @@
 import SwiftUI
 import Web3
 import Web3ContractABI
+import BigInt
 
 struct MethodView: View {
     
@@ -23,6 +24,8 @@ struct MethodView: View {
     private let wallet: EthereumAddress?
     
     @State private var inputs: [String] = []
+    
+    @State private var fetching: Bool = false
     
     @State private var showAlert: Bool = false
     @State private var result: String = ""
@@ -150,6 +153,41 @@ struct MethodView: View {
         } else {
             throw TestWalletError.general("some of inputs convert failed.")
         }
+    }
+    
+    private func invoke(signed: Bool = false) {
+        guard inputs.filter({ $0.isEmpty }).isEmpty else { return }
+        if signed && wallet == nil { return }
+        Task {
+            do {
+                fetching = true
+                let inputs = try convertInputs(inputs)
+                guard let function = method as? BetterInvocation else { return }
+                let invocation = function.betterInvoke(inputs)
+            } catch {
+                result = errorHandler(error).replacingOccurrences(of: "VM Exception while processing transaction: revert", with: "")
+            }
+            showAlert = true
+            fetching = false
+        }
+    }
+    
+    private func call(_ invocation: SolidityInvocation) async throws {
+        let response = try await invocation.call().async()
+        myPrint("call of method \(methodName) with inputs \(inputs) got response", response)
+        guard let outputs = method.outputs else { return }
+        var result = ""
+        for (index, output) in outputs.enumerated() {
+            switch output.type {
+            case .type(.address):
+                result += "\(output.name): \((response[output.name] as! EthereumAddress).hex(eip55: true))\n"
+            case .type(.bytes):
+                result += "\(output.name): \((response[output.name] as? Data)?.makeString() ?? response[output.name].debugDescription)\n"
+            default:
+                result += "\(output.name): \(response[output.name]!)\n"
+            }
+        }
+        self.result = result
     }
     
     private func errorHandler(_ error: Error) -> String {
