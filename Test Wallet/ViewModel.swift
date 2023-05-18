@@ -16,7 +16,11 @@ class ViewModel: ObservableObject {
     var addresses: [EthereumAddress] {
         wallets.map { $0.address }
     }
-    @Published var selectedWalletIndex: Int = 0
+    @Published var selectedWalletIndex: Int = 0 {
+        didSet {
+            initialNetwork(selectedNetwork)
+        }
+    }
     private var wallet: EthereumPrivateKey? {
         if selectedWalletIndex + 1 <= wallets.count {
             return wallets[selectedWalletIndex]
