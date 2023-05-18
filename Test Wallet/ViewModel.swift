@@ -69,7 +69,7 @@ class ViewModel: ObservableObject {
             // TODO: give the erc721 standard methods
             return [:]
         } else if let contract = _selectedContract as? DynamicContract {
-            let constants = contract.methods.filter { ($0.value as? BetterInvocation)?.type == .constant }
+            let constants = contract.methods // .filter { ($0.value as? BetterInvocation)?.type == .constant }
             return constants
         } else {
             return [:]
