@@ -118,6 +118,39 @@ struct MethodView: View {
             }
         )
     }
+    
+    private func convertInputs(_ inputs: [String]) throws -> [ABIEncodable] {
+        var outputs: [ABIEncodable] = []
+        for (index, input) in inputs.enumerated() {
+            switch method.inputs[index].type {
+            case .type(.address):
+                if let address = EthereumAddress(hexString: input) {
+                    outputs.append(address)
+                }
+            case .type(.uint):
+                if let uint256 = BigUInt(input, radix: 10) {
+                    outputs.append(uint256)
+                }
+            case .type(.int):
+                if let int256 = BigInt(input, radix: 10) {
+                    outputs.append(int256)
+                }
+            case .type(.bool):
+                outputs.append(input == "True")
+            case .type(.bytes):
+                if let data = input.data(using: .utf8) {
+                    outputs.append(data)
+                }
+            default:
+                outputs.append(input)
+            }
+        }
+        if inputs.count == outputs.count {
+            return outputs
+        } else {
+            throw TestWalletError.general("some of inputs convert failed.")
+        }
+    }
 }
 
 //struct MethodView_Previews: PreviewProvider {
