@@ -27,17 +27,6 @@ struct MethodView: View {
     @State private var showAlert: Bool = false
     @State private var result: String = ""
     
-    private func binding(index: Int) -> Binding<String> {
-        Binding<String>(
-            get: {
-                return inputs[index]
-            },
-            set: {
-                inputs[index] = $0
-            }
-        )
-    }
-    
     var body: some View {
         Form {
             Text(methodName)
@@ -95,6 +84,39 @@ struct MethodView: View {
                 title: Text(result)
             )
         }
+    }
+    
+    private func binding(index: Int) -> Binding<String> {
+        Binding<String>(
+            get: {
+                return inputs[index]
+            },
+            set: {
+                inputs[index] = $0
+            }
+        )
+    }
+    
+    private func binding(index: Int) -> Binding<Bool> {
+        Binding<Bool>(
+            get: {
+                return inputs[index] == "True" ? true : false
+            },
+            set: {
+                inputs[index] = $0 ? "True" : "False"
+            }
+        )
+    }
+    
+    private func bindingInt(index: Int) -> Binding<Int> {
+        Binding<Int>(
+            get: {
+                return Int(inputs[index]) ?? 0
+            },
+            set: {
+                inputs[index] = "\($0)"
+            }
+        )
     }
 }
 
