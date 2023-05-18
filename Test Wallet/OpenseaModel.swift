@@ -38,6 +38,8 @@ struct Opensea {
             case schemaName = "schema_name"
             case symbol
         }
+        
+        var abiData: Data? = nil
     }
     
     struct Collection: Codable {

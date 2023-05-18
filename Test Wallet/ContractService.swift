@@ -51,6 +51,40 @@ actor ContractService {
         }
     }
     
+    /// fetch contract infomation such as contract address and abi content as json data
+    public func fetchPomoCollections() async throws -> [Opensea.Collection] {
+        return try await withCheckedThrowingContinuation { continuation in
+            guard let abiUrl = Bundle.main.url(forResource: "1155abi", withExtension: "json") else {
+                continuation.resume(throwing: TestWalletError.general("abi url construct failed"))
+                return
+            }
+            do {
+                let address = "0x09430eF1032bBB52c4F60BC00Bb0AaC1dfEd3972"
+                if let contractAddress = EthereumAddress(hexString: address) {
+                    let abiData = try Data(contentsOf: abiUrl)
+                    continuation.resume(returning: [
+                        Opensea.Collection(
+                            primaryAssetContracts: [
+                                Opensea.AssetContract(
+                                    address: address,
+                                    chainIdentifier: .pomo,
+                                    name: "POMO TEST",
+                                    schemaName: .ERC1155,
+                                    symbol: "POMO",
+                                    abiData: abiData)
+                            ],
+                            ownedAssetCount: 0
+                        )
+                    ])
+                } else {
+                    continuation.resume(returning: [])
+                }
+            } catch {
+                continuation.resume(throwing: error)
+            }
+        }
+    }
+    
     private func getContractAbi(contract address: String) async throws -> Data {
         return try await withCheckedThrowingContinuation { continuation in
             API.shared.request(EtherscanAPIs.AbiFromContract(address: address))
@@ -75,11 +109,15 @@ actor ContractService {
     public func addContracts(_ collections: [Opensea.Collection]) async throws {
         for collection in collections {
             for contract in collection.validAssetContracts {
-                switch contract.schemaName {
-                default:
-                    guard let contractAddress = EthereumAddress(hexString: contract.address) else { continue }
-                    let abiData = try await getContractAbi(contract: contract.address)
+                if let abiData = contract.abiData, let contractAddress = EthereumAddress(hexString: contract.address) {
                     await addDynamicContract(name: "\(contract.name) - \(contract.address)", address: contractAddress, abiData: abiData)
+                } else {
+                    switch contract.schemaName {
+                    default:
+                        guard let contractAddress = EthereumAddress(hexString: contract.address) else { continue }
+                        let abiData = try await getContractAbi(contract: contract.address)
+                        await addDynamicContract(name: "\(contract.name) - \(contract.address)", address: contractAddress, abiData: abiData)
+                    }
                 }
             }
         }

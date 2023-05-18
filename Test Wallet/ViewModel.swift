@@ -109,11 +109,12 @@ class ViewModel: ObservableObject {
                 guard let walletAddress else { return }
                 let balance = try await reloadBalance(of: walletAddress)
                 let collections = try await retrieveCollections(of: walletAddress)
-                try await reloadCollectionContracts(collections)
+                let pomoCollections = try await fetchPomoCollections()
+                try await reloadCollectionContracts(collections + pomoCollections)
                 await MainActor.run {
                     self._balance = balance
-                    self.collections = collections
-                    self.contracts = collections.reduce([], { $0 + $1.validAssetContracts })
+                    self.collections = (collections + pomoCollections)
+                    self.contracts = (collections + pomoCollections).reduce([], { $0 + $1.validAssetContracts })
                     self.selectedContractIndex = { selectedContractIndex }()
                 }
             } catch {
@@ -132,6 +133,14 @@ class ViewModel: ObservableObject {
     
     private func retrieveCollections(of address: EthereumAddress) async throws -> [Opensea.Collection] {
         var collections = try await ContractService.shared.retrieveCollections(for: address)
+        for index in 0 ..< collections.count {
+            collections[index].appliedChain = selectedNetwork.chainIdentity
+        }
+        return collections
+    }
+    
+    private func fetchPomoCollections() async throws -> [Opensea.Collection] {
+        var collections =  try await ContractService.shared.fetchPomoCollections()
         for index in 0 ..< collections.count {
             collections[index].appliedChain = selectedNetwork.chainIdentity
         }
