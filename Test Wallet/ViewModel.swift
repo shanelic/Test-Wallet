@@ -12,6 +12,22 @@ import Web3ContractABI
 
 class ViewModel: ObservableObject {
     
+    @Published private var wallets: [EthereumPrivateKey] = []
+    var addresses: [EthereumAddress] {
+        wallets.map { $0.address }
+    }
+    @Published var selectedWalletIndex: Int = 0
+    private var wallet: EthereumPrivateKey? {
+        if selectedWalletIndex + 1 <= wallets.count {
+            return wallets[selectedWalletIndex]
+        } else {
+            return nil
+        }
+    }
+    public var walletAddress: EthereumAddress? {
+        wallet?.address
+    }
+    
     @Published var networks: [Network] = [
         .EthereumMainnet,
         .EthereumGoerli,
@@ -58,8 +74,13 @@ class ViewModel: ObservableObject {
     
     @Published var selectedMethod: (String, SolidityFunction)? = nil
     
-    var walletAddress: EthereumAddress? {
-        try? EthereumPrivateKey(hexPrivateKey: MY_PRIVATE_KEY).address
+    public func importWallet(privateKey: String) throws {
+        let wallet = try EthereumPrivateKey(hexPrivateKey: privateKey)
+        if !wallets.contains(where: { $0.address == wallet.address }) {
+            wallets.append(wallet)
+        } else {
+            throw TestWalletError.general("Duplicated Private Key, Please Check Again.")
+        }
     }
     
     @Published private var _balance: EthereumQuantity = 0
@@ -225,5 +246,9 @@ extension String {
         guard let elements = try? jsonDecoder.decode(Array<Dictionary<String, AnyCodable>>.self, from: data) else { return nil }
         let result = elements.filter { ($0["type"]?.value as? String) != "error" }
         return try? result.json()
+    }
+    
+    var simpleAddress: String {
+        return self.dropLast(34) + "..." + self.dropFirst(36)
     }
 }

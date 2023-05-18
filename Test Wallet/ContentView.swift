@@ -31,6 +31,8 @@ struct ContentView: View {
     
     @State private var showMethodSheet = false
     
+    @State private var privateKey: String = ""
+    
     var service = WalletConnectService()
     
     func reset() {
@@ -68,6 +70,26 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 8) {
+                HStack {
+                    Text("Private Key").bold()
+                    Spacer()
+                    TextField("Private Key", text: $privateKey)
+                }
+                Button("Import Wallet") {
+                    do {
+                        try viewModel.importWallet(privateKey: privateKey)
+                    } catch {
+                    }
+                }
+                HStack {
+                    Text("Select Account").bold()
+                    Spacer()
+                    Picker("", selection: $viewModel.selectedWalletIndex) {
+                        ForEach(0 ..< viewModel.addresses.count, id: \.self) { option in
+                            Text(viewModel.addresses[option].hex(eip55: true).simpleAddress)
+                        }
+                    }
+                }
                 HStack {
                     Text("Select Network").bold()
                     Spacer()
