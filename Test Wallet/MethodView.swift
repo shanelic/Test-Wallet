@@ -34,33 +34,23 @@ struct MethodView: View {
         Form {
             Text(methodName)
                 .font(.title2)
-            ForEach(0 ..< method.inputs.count, id: \.self) { index in
-                TextField(method.inputs[index].name, text: binding(index: index))
-            }
-            Button("Call") {
-                if inputs.filter({ $0.isEmpty }).isEmpty {
-                    Task {
-                        if let response = try? await (method as? BetterInvocation)?
-                            .betterInvoke(inputs)
-                            .call()
-                            .async()
-                        {
-                            myPrint("call of method \(methodName) with inputs \(inputs) got response", response)
-                            guard let outputs = method.outputs else { return }
-                            var result = ""
-                            for (index, output) in outputs.enumerated() {
-                                switch method.outputs![index].type {
-                                case .address:
-                                    result += "\(output.name): \((response[output.name] as! EthereumAddress).hex(eip55: true))\n"
-                                default:
-                                    result += "\(output.name): \(response[output.name]!)\n"
-                                }
-                            }
-                            self.result = result
-                            self.showAlert = true
-                        }
-                    }
+            ForEach(0 ..< method.inputs.count) { index in
+                switch method.inputs[index].type {
+                case .type(.address):
+                    TextField(method.inputs[index].name, text: binding(index: index))
+                case .type(.uint), .type(.int):
+                    TextField(method.inputs[index].name, value: bindingInt(index: index), formatter: NumberFormatter())
+                case .type(.bool):
+                    Toggle(method.inputs[index].name, isOn: binding(index: index))
+                default:
+                    TextField(method.inputs[index].name, text: binding(index: index))
                 }
+            }
+            Button("Invoke", action: { invoke() })
+                .disabled(fetching)
+            if (method as? BetterInvocation)?.type != .constant {
+                Button("Send Transaction", action: { invoke(signed: true) })
+                    .disabled(fetching)
             }
         }
         .padding()
