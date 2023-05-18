@@ -84,8 +84,8 @@ struct MethodView: View {
     }
 }
 
-struct MethodView_Previews: PreviewProvider {
-    static var previews: some View {
-        MethodView()
-    }
-}
+//struct MethodView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        MethodView()
+//    }
+//}
