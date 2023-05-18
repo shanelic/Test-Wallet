@@ -151,6 +151,27 @@ struct MethodView: View {
             throw TestWalletError.general("some of inputs convert failed.")
         }
     }
+    
+    private func errorHandler(_ error: Error) -> String {
+        myPrint(error)
+        if case .general(let reason) = error as? TestWalletError {
+            return reason
+        } else if let error = error as? RPCResponse<EthereumQuantity>.Error {
+            return error.message
+        } else if let error = error as? RPCResponse<EthereumData>.Error {
+            return error.message
+        } else if case .invalidInvocation = error as? InvocationError {
+            return (error as! InvocationError).localizedDescription + " invalid invocation"
+        } else if case .contractNotDeployed = error as? InvocationError {
+            return (error as! InvocationError).localizedDescription + " contract not deployed"
+        } else if case .encodingError = error as? InvocationError {
+            return (error as! InvocationError).localizedDescription + " encoding error"
+        } else if case .invalidConfiguration = error as? InvocationError {
+            return (error as! InvocationError).localizedDescription + " invalid configuration"
+        } else {
+            return error.localizedDescription
+        }
+    }
 }
 
 //struct MethodView_Previews: PreviewProvider {
