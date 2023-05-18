@@ -197,6 +197,19 @@ struct Network {
     static let PomoTestnet = Network(name: "POMO Testnet", chainId: 1337, rpcServers: [
         RpcServer(url: "https://dev-ganache.pomo.network/:9527", type: .http)
     ], multicall3: "0xca11bde05977b3631167028862be2a173976ca11", chainIdentity: .pomo)
+    
+    static var chains: [Blockchain] {
+        [
+            EthereumMainnet.blockchain,
+            EthereumGoerli.blockchain,
+            PolygonMainnet.blockchain,
+            PomoTestnet.blockchain,
+        ]
+    }
+    
+    static func getAccounts(by address: EthereumAddress) -> [Account] {
+        chains.compactMap { Account(blockchain: $0, address: address.hex(eip55: true)) }
+    }
 }
 
 func myPrint(_ items: Any...) {

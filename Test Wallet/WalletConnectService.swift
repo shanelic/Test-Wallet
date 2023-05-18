@@ -61,16 +61,13 @@ class WalletConnectService {
         
         Web3Wallet.instance.sessionProposalPublisher
             .receive(on: DispatchQueue.main)
-            .sink { proposal in
+            .sink { [weak self] proposal in
                 myPrint("[web3wallet] session proposal below:", proposal)
-                if let myPrivateKey = try? EthereumPrivateKey(hexPrivateKey: MY_PRIVATE_KEY),
-                   let account = Account(chainIdentifier: Network.EthereumGoerli.eip155, address: myPrivateKey.address.hex(eip55: true))
-                {
-                    Task.detached { [unowned self] in
-                        await approveProposal(proposal, by: account)
-                    }
-                } else {
-                    myPrint("[web3wallet] initial account failed.")
+                guard let self else { return }
+                let accounts = accounts.flatMap { Network.getAccounts(by: $0) }
+                Task { [weak self] in
+                    guard let self else { return }
+                    await approveProposal(proposal, by: accounts)
                 }
             }
             .store(in: &publishers)
@@ -99,30 +96,31 @@ class WalletConnectService {
             .store(in: &publishers)
     }
     
-    func approveProposal(_ proposal: Session.Proposal, by account: Account) async {
+    func approveProposal(_ proposal: Session.Proposal, by accounts: [Account]) async {
         do {
-            let pomo = Network.PomoTestnet.blockchain
-            let goerli = Network.EthereumGoerli.blockchain
             guard let requiredEip155 = proposal.requiredNamespaces["eip155"] else {
                 myPrint("[web3wallet] approving proposal: required eip-155 initializing failed.")
                 return
             }
-            guard requiredEip155.chains?.contains(pomo) ?? false || requiredEip155.chains?.contains(goerli) ?? false else {
+            guard requiredEip155.chains?.filter({ !Network.chains.contains($0) }).isEmpty ?? false else {
                 myPrint("[web3wallet] the proposal requires blockchain(s) we are not supporting yet.")
-                myPrint("[web3wallet] the blockchains we support only now are \(pomo) and \(goerli).")
+                myPrint("[web3wallet] the blockchains we support only now are \(Network.chains.map({ $0.absoluteString }).joined(separator: ", ")).")
                 return
             }
+            let methods = requiredEip155.methods
+//                .sorted()
+                .union(proposal.optionalNamespaces?["eip155"]?.methods ?? []).sorted()
+            let events = requiredEip155.events
+//                .sorted()
+                .union(proposal.optionalNamespaces?["eip155"]?.events ?? []).sorted()
+            myPrint("[web3wallet] methods from proposal", methods)
+            myPrint("[web3wallet] events from proposal", events)
             let namespace = try AutoNamespaces.build(
                 sessionProposal: proposal,
-                chains: [
-                    pomo,
-                    goerli,
-                ],
-                methods: requiredEip155.methods.sorted(),
-                events: requiredEip155.events.sorted(),
-                accounts: [
-                    account
-                ]
+                chains: Network.chains,
+                methods: methods,
+                events: events,
+                accounts: accounts
             )
             try await Web3Wallet.instance.approve(proposalId: proposal.id, namespaces: namespace)
         } catch {
