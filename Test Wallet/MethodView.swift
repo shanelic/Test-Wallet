@@ -56,8 +56,13 @@ struct MethodView: View {
                             myPrint("call of method \(methodName) with inputs \(inputs) got response", response)
                             guard let outputs = method.outputs else { return }
                             var result = ""
-                            for output in outputs {
-                                result += "\(output.name): \(response[output.name].debugDescription)\n"
+                            for (index, output) in outputs.enumerated() {
+                                switch method.outputs![index].type {
+                                case .address:
+                                    result += "\(output.name): \((response[output.name] as! EthereumAddress).hex(eip55: true))\n"
+                                default:
+                                    result += "\(output.name): \(response[output.name]!)\n"
+                                }
                             }
                             self.result = result
                             self.showAlert = true
