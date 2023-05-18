@@ -154,6 +154,18 @@ struct MethodView: View {
                 let inputs = try convertInputs(inputs)
                 guard let function = method as? BetterInvocation else { return }
                 let invocation = function.betterInvoke(inputs)
+                switch function.type {
+                case .constant:
+                    try await call(invocation)
+                case .nonPayable, .payable:
+                    if signed {
+                        let response = try await invocation.send(from: wallet!).async()
+                        self.result = "hash: \(response.hex())"
+                    } else {
+                        let gas = try await invocation.estimateGas(from: wallet).async()
+                        self.result = "estimate gas is \(gas.quantity) gwei"
+                    }
+                }
             } catch {
                 result = errorHandler(error).replacingOccurrences(of: "VM Exception while processing transaction: revert", with: "")
             }
