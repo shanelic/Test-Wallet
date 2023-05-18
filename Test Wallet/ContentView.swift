@@ -144,6 +144,9 @@ struct ContentView: View {
                 }
                 scannedWalletConnect = ""
             }
+            .onChange(of: viewModel.addresses) { newValue in
+                service.setupAccounts(newValue)
+            }
         }
         .sheet(isPresented: $showMethodSheet, onDismiss: {
             viewModel.selectedMethod = nil

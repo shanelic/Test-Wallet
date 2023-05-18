@@ -44,10 +44,16 @@ class WalletConnectService {
     
     private var publishers = [AnyCancellable]()
     
+    var accounts: [EthereumAddress] = []
+    
     init() {
         let metadata = AppMetadata(name: "Test Wallet", description: "The Test Wallet For POMO Network demo", url: "https://pomo.network", icons: [])
         Networking.configure(projectId: projectId, socketFactory: DefaultSocketFactory())
         web3WalletInitializer(metadata)
+    }
+    
+    func setupAccounts(_ accounts: [EthereumAddress]) {
+        self.accounts = accounts
     }
     
     private func web3WalletInitializer(_ metadata: AppMetadata) {
@@ -78,8 +84,9 @@ class WalletConnectService {
         
         Web3Wallet.instance.sessionRequestPublisher
             .receive(on: DispatchQueue.main)
-            .sink { [unowned self] request in
+            .sink { [weak self] request in
                 myPrint("[web3wallet] session request \(request.method) below: ", request)
+                guard let self else { return }
                 parseSessionRequest(request)
             }
             .store(in: &publishers)
@@ -119,7 +126,7 @@ class WalletConnectService {
             )
             try await Web3Wallet.instance.approve(proposalId: proposal.id, namespaces: namespace)
         } catch {
-            myPrint("[web3wallet] approving proposal failed: ", error.localizedDescription)
+            myPrint("[web3wallet] approving proposal failed: ", error)
         }
     }
     
@@ -207,6 +214,7 @@ class WalletConnectService {
                 }
             }
         default:
+            myPrint("received unknown request", request)
             Task.detached { [unowned self] in
                 await rejectRequest(request)
             }
