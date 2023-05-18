@@ -9,6 +9,7 @@ import Foundation
 import Web3
 import Web3Wallet
 import Web3ContractABI
+import BigInt
 
 class ViewModel: ObservableObject {
     
